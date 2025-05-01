@@ -9,5 +9,5 @@ export const globalErrorHandler = (
 ) => {
   const statusCode = err.status || 500;
   const message = err.message || "Something Went Wrong";
-  errorResponse(res, statusCode, message);
+  return errorResponse(res, statusCode, message);
 };
