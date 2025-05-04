@@ -1,5 +1,6 @@
 import { ZodError, ZodSchema } from "zod";
 import { NextFunction, Request, Response } from "express";
+import { ValidationError } from "../Utils/Error";
 
 export const formatError = (error: ZodError): any => {
   let errors: any = {};

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { MONGO_URI } from "./env.config";
+import { BadRequestError } from "../Utils/Error";
 
 export const connectDB = async () => {
   try {
@@ -11,6 +12,7 @@ export const connectDB = async () => {
     console.log(`MongoDB Connected: ${conn.connection.host}`);
     return;
   } catch (error: any) {
-    throw new Error(error);
+    console.log("Error in connecting mongodb");
+    throw error;
   }
 };

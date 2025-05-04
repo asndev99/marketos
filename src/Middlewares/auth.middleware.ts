@@ -4,6 +4,7 @@ import { MongoUserRepository } from "../Modules/User/repository/user.repository"
 import { JWT_SECRET } from "../Configs/env.config";
 import { JwtVerifiedPayload } from "../Common/constants";
 import jwt from "jsonwebtoken";
+import { UnauthorizedError } from "../Utils/Error";
 
 const userRepository = new MongoUserRepository();
 export const verifyUser = async (

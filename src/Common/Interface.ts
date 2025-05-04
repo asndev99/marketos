@@ -1,5 +1,5 @@
-import { IUser } from "../Modules/User/interface";
+import { IUserDocument } from "../Modules/User/user.model";
 
 export interface AuthRequest extends Request {
-  user: IUser;
+  user: IUserDocument;
 }

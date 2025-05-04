@@ -2,9 +2,11 @@ import mongoose, { Document, Schema } from "mongoose";
 import { IUser } from "./interface";
 import { UserRole } from "../../Common/constants";
 
-export interface IUserModel extends Document, IUser {}
+export interface IUserDocument extends IUser, Document {
+  _id: string;
+}
 
-const userSchema: Schema<IUserModel> = new Schema({
+const userSchema: Schema<IUserDocument> = new Schema({
   username: {
     type: String,
     required: false,
@@ -18,6 +20,10 @@ const userSchema: Schema<IUserModel> = new Schema({
     enum: Object.values(UserRole),
     required: true,
   },
+  isNotificationsEnabled: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-export const UserModel = mongoose.model<IUserModel>("User", userSchema);
+export const UserModel = mongoose.model<IUserDocument>("User", userSchema);
