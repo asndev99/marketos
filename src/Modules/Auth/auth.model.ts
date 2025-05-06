@@ -1,8 +1,8 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 
 // Interface
 export interface ISession extends Document {
-  userId: string;
+  userId: Types.ObjectId;
   accessToken: string;
   deviceType?: string;
   refreshToken?: string;
@@ -12,7 +12,8 @@ export interface ISession extends Document {
 const sessionSchema: Schema<ISession> = new Schema(
   {
     userId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
     accessToken: {

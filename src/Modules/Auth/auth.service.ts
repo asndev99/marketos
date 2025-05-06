@@ -29,7 +29,7 @@ const loginAdmin = async (req: Request, res: Response) => {
   }
 
   const accessToken = TokenService.generateAccessToken({
-    _id: user._id,
+    _id: user._id.toString(),
     role: user.role,
   });
   return { accessToken };
