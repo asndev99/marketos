@@ -1,9 +1,9 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 import { IUser } from "./interface";
 import { UserRole } from "../../Common/constants";
 
 export interface IUserDocument extends IUser, Document {
-  _id: string;
+  _id: Types.ObjectId;
 }
 
 const userSchema: Schema<IUserDocument> = new Schema({
