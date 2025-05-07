@@ -1,15 +1,21 @@
 import mongoose, { Document, Schema } from "mongoose";
 import { ICompany } from "./interface";
-export interface ICompanyModel extends Document, ICompany {}
+export interface ICompanyDocument extends ICompany, Document {}
 
-const companySchema: Schema<ICompanyModel> = new Schema(
+const companySchema: Schema<ICompanyDocument> = new Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      unique: true
+    },
     companyName: {
       type: String,
       required: true,
     },
     establishedDate: {
-      type: Date,
+      type: String,
       required: true,
     },
     websiteLink: {
@@ -31,6 +37,10 @@ const companySchema: Schema<ICompanyModel> = new Schema(
     address: {
       type: String,
       required: true,
+    },
+    warehouseAddress: {
+        type: String,
+        required: false
     },
     NTN: {
       type: String,
@@ -73,7 +83,7 @@ const companySchema: Schema<ICompanyModel> = new Schema(
     timestamps: true,
   }
 );
-export const companyModel = mongoose.model<ICompanyModel>(
+export const CompanyModel = mongoose.model<ICompanyDocument>(
   "Company",
   companySchema
 );

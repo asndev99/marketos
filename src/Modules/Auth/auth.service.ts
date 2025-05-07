@@ -45,7 +45,7 @@ const createCompany = async (req: Request, res: Response) => {
     );
   }
   const hashPassword = bcrypt.hashSync(req.body.password, 10);
-  return userRepository.create({ ...req.body, hashPassword });
+  return userRepository.create({ ...req.body, password: hashPassword });
 };
 
 export default {

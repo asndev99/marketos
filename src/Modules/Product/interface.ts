@@ -1,4 +1,6 @@
+import {Types} from "mongoose";
 export interface IProduct {
+    companyId: Types.ObjectId,
     name: String,
     description: String,
     category: String,

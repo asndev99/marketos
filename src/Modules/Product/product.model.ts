@@ -4,6 +4,11 @@ export interface IProductModel extends Document, IProduct {}
 
 const productSchema: Schema<IProductModel> = new Schema(
   {
+    companyId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Company",
+      required: true,
+    },
     name: {
       type: String,
       required: true,

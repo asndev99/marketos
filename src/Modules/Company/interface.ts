@@ -1,11 +1,14 @@
+import { Types } from "mongoose";
 export interface ICompany {
+    userId: Types.ObjectId,
     companyName: String,
-    establishedDate: Date,
+    establishedDate: String,
     websiteLink: String,
     category: String,
     state: String,
     city: String,
     address: String,
+    warehouseAddress: String,
     NTN: String,
     saleTaxNum: String,
     contactPersonName: String,

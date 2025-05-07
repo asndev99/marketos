@@ -27,6 +27,6 @@ adminRouter.post(
   authorizeRole(UserRole.ADMIN),
   validateSchema(createCompanySchema),
   adminController.createCompany
-);
+); 
 
 export default adminRouter;
