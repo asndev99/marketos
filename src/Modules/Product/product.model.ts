@@ -1,8 +1,8 @@
 import mongoose, { Document, Schema } from "mongoose";
 import { IProduct } from "./interface";
-export interface IProductModel extends Document, IProduct {}
+export interface IProductDocument extends Document, IProduct {}
 
-const productSchema: Schema<IProductModel> = new Schema(
+const productSchema: Schema<IProductDocument> = new Schema(
   {
     companyId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -55,7 +55,7 @@ const productSchema: Schema<IProductModel> = new Schema(
     timestamps: true,
   }
 );
-export const productModel = mongoose.model<IProductModel>(
+export const ProductModel = mongoose.model<IProductDocument>(
   "Product",
   productSchema
 );

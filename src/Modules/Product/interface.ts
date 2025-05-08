@@ -13,3 +13,7 @@ export interface IProduct {
     status: String,
     images: string[]
 }
+export interface IProductImage {
+    productId: Types.ObjectId,
+    image: string
+}

@@ -4,6 +4,7 @@ import { verifyUser } from "../../Middlewares/auth.middleware";
 import { authorizeRole } from "../../Middlewares/authorize.roles.middleware";
 import { UserRole } from "../../Common/constants";
 import { loginAdminSchema } from "../Admin/validation/loginAdminSchema";
+import handleMultipartData from "../../Middlewares/multer.middleware";
 
 const companyRouter = require("express").Router();
 
@@ -17,8 +18,14 @@ companyRouter.post(
     "/create-profile",
     verifyUser,
     authorizeRole(UserRole.COMPANY),
-    // Need to add multer middleware
+    handleMultipartData(["coverPhoto", "logo"]),
     companyController.createProfile
 )
 
+companyRouter.get(
+    "/",
+    verifyUser,
+    authorizeRole(UserRole.COMPANY),
+    companyController.getProfile
+)
 export default companyRouter;

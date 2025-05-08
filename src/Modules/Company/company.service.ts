@@ -1,10 +1,15 @@
 import { Request, Response, NextFunction } from "express";
 import { MongoUserRepository } from "../User/repository/user.repository";
-import { UserRole } from "../../Common/constants";
 import TokenService from "../Auth/token.service";
 import { BadRequestError } from "../../Utils/Error";
 import bcrypt from "bcrypt";
 import { MongoCompanyRepository } from "./repository/company.repository";
+interface MulterRequest extends Request {
+    files: {
+        [fieldname: string]: Express.Multer.File[]
+    }
+}
+import {uploadBufferToCloudinary} from "../../Utils/helpers";
 
 const companyRepository = new MongoCompanyRepository();
 const userRepository = new MongoUserRepository();
@@ -27,12 +32,28 @@ const login = async (req: Request, res: Response) => {
   return {accessToken};
 };
 
-const createCompanyDetails = async (req: Request, res: Response) => {
-  let {companyName, establishedDate, websiteLink, category, city, state, address, warehouseAddress, saleTaxNum, NTN, contactPersonName, contactNumber, contactEmail, alternativeNumber, numOfDistribution} = req.body;
+const createCompanyDetails = async (req: MulterRequest, res: Response) => {
+  let {numOfDistribution, companyName} = req.body;
+  const userId = req?.user?._id;
   numOfDistribution = Number(numOfDistribution);
-  return companyRepository.create({...req.body});
+  const isCompanyAlreadyExist = await companyRepository.findOne({userId, companyName})
+  if(isCompanyAlreadyExist){
+    throw new BadRequestError("Company already Created");
+  }
+  const { url: coverPhoto } = await uploadBufferToCloudinary(req?.files["coverPhoto"]?.[0]?.buffer, req?.files["coverPhoto"]?.[0].originalname, "companies");
+  const { url: logo } = await uploadBufferToCloudinary(req?.files["logo"]?.[0]?.buffer, req?.files["logo"]?.[0].originalname, "companies");
+  return companyRepository.create({userId, ...req.body, coverPhoto: coverPhoto, profileLogo: logo});
 };
+const getCompanyDetails = async (req: Request, res: Response) => {
+    const userId = req?.user?._id;
+    const companyDetails = await companyRepository.findOne({userId})
+    if(!companyDetails){
+      throw new BadRequestError("Company Not Created");
+    }
+    return companyDetails;
+}
 export default {
     login,
     createCompanyDetails,
+    getCompanyDetails
 };
