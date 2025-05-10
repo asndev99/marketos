@@ -12,6 +12,10 @@ const productSchema: Schema<IProductImageDocument> = new Schema(
     image: {
         type: String,
         required: true
+    },
+    isDelete: {
+        type: Boolean,
+        required: false
     }
   },
   {

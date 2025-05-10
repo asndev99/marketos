@@ -50,11 +50,25 @@ const productSchema: Schema<IProductDocument> = new Schema(
       enum: ["ACTIVE", "INACTIVE", "DISCOUNTED"],
       required: true,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false
+    }
   },
   {
     timestamps: true,
   }
 );
+// product.schema.ts
+productSchema.virtual("images", {
+  ref: "ProductImage",
+  localField: "_id",
+  foreignField: "productId",
+});
+
+productSchema.set("toObject", { virtuals: true });
+productSchema.set("toJSON", { virtuals: true });
+
 export const ProductModel = mongoose.model<IProductDocument>(
   "Product",
   productSchema

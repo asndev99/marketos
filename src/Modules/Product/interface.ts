@@ -11,9 +11,10 @@ export interface IProduct {
     discountedPrice: Number,
     stockQuantity: Number,
     status: String,
-    images: string[]
+    isDeleted: Boolean
 }
 export interface IProductImage {
+    isDelete: Boolean,
     productId: Types.ObjectId,
     image: string
 }
