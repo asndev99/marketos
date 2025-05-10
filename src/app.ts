@@ -1,12 +1,13 @@
 import express, { Application } from "express";
 import { globalErrorHandler } from "./Middlewares/global.errorhandler.middleware";
-import adminRouter from "./Modules/Admin/admin.router";
+// import adminRouter from "./Modules/Admin/admin.router";
+import appRoutes from "./index.routing";
 
 export default async (app: Application) => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  app.use("/admin", adminRouter);
+  app.use("/api", appRoutes);
   app.use(globalErrorHandler);
   return app;
 };

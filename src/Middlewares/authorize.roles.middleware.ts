@@ -7,6 +7,8 @@ export const authorizeRole = (role: UserRole) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (req.user.role !== role) {
       throw new UnauthorizedError("You Are Not Allowed To Access This Route");
+    }else {
+      next();
     }
   };
 };
