@@ -1,10 +1,10 @@
-import * as express from "express";
-import { IUserDocument } from "../../Modules/User/user.model";
+import * as express from 'express';
+import { IUserDocument } from '../../Modules/User/user.model';
 
 declare global {
-  namespace Express {
-    interface Request {
-      user?: IUserDocument;
+    namespace Express {
+        interface Request {
+            user: IUserDocument;
+        }
     }
-  }
 }

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { successResponse } from "../../Utils/Response";
-import companyService from './company.service';
+import companyService from './services/company.profile.service';
 interface MulterRequest extends Request {
   files: {
       [fieldname: string]: Express.Multer.File[]
@@ -9,8 +9,8 @@ interface MulterRequest extends Request {
 
 const loginCompany = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const data = await companyService.login(req, res);
-    return successResponse(res, 200, "Successfully Logged in ", data);
+      // const data = await companyService.login(req, res);
+      // return successResponse(res, 200, "Successfully Logged in ", data);
   } catch (error) {
     console.log("Error in logging in admin", error);
     next(error);

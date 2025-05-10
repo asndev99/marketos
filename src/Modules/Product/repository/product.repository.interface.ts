@@ -1,14 +1,14 @@
-import { IProduct, IProductImage } from "../interface";
-import { IProductDocument } from "../product.model";
-import { FilterQuery, Types } from "mongoose";
+import { IProduct, IProductImage } from '../interface';
+import { IProductDocument } from '../product.model';
+import { FilterQuery, Types } from 'mongoose';
 type NewProductImage = {
-  image: string;
-  productId: Types.ObjectId;
+    image: string;
+    productId: Types.ObjectId;
 };
 type Images = {
-    _id: Types.ObjectId
-}
-export interface ICompanyRepository {
+    _id: Types.ObjectId;
+};
+export interface IProductRepository {
     create(data: Partial<IProductDocument>): Promise<IProductDocument>;
     findOne(payload: FilterQuery<IProductDocument>): Promise<IProductDocument | null>;
     createImage(data: NewProductImage[]): Promise<IProductImage[]>;
