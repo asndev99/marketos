@@ -10,6 +10,7 @@ const userSchema: Schema<IUserDocument> = new Schema({
     username: {
         type: String,
         required: false,
+        unique: true,
     },
     password: {
         type: String,
@@ -21,6 +22,10 @@ const userSchema: Schema<IUserDocument> = new Schema({
         required: true,
     },
     isNotificationsEnabled: {
+        type: Boolean,
+        default: false,
+    },
+    isProfileCompleted: {
         type: Boolean,
         default: false,
     },

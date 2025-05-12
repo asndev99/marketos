@@ -26,7 +26,7 @@ const createCompany = async (req: Request, res: Response, next: NextFunction) =>
 //IT SHOULD BE ROLE BASED DYNAMIC LOGIN.
 const login = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const data = authService.login(req, res);
+        const data = await authService.login(req, res);
         return successResponse(res, 200, 'Logged In Successfully', data);
     } catch (error) {
         console.log('Error in logging in', error);
@@ -34,8 +34,30 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
+//NOT IN USER FOR NOW
+const createShop = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const data = await authService.createShop(req);
+        return successResponse(res, 200, 'Shop User Created Now Complete Details', data);
+    } catch (error) {
+        console.log('Error in creating shop', error);
+        next(error);
+    }
+};
+
+const validateUsername = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        await authService.validateUsername(req);
+        return successResponse(res, 200, 'Username is available', null);
+    } catch (error) {
+        console.log('Error in validating username', error);
+        next(error);
+    }
+};
 export default {
     login,
     createAdmin,
     createCompany,
+    createShop,
+    validateUsername,
 };

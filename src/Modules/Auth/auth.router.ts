@@ -3,7 +3,7 @@ import { validateSchema } from '../../Middlewares/validateSchema';
 import { createAdminSchema } from './validation/createAdminSchema';
 import authController from './auth.controller';
 import { createCompanySchema } from './validation/createCompanySchema';
-import { login } from './validation/common';
+import { login, validateUserNameSchema } from './validation/common';
 
 const authRouter = Router();
 
@@ -21,5 +21,11 @@ authRouter.post(
 
 //GENERALIZED ROUTES
 authRouter.post('/login', validateSchema(login), authController.login);
+
+authRouter.post(
+    '/validate-username',
+    validateSchema(validateUserNameSchema),
+    authController.validateUsername
+);
 
 export default authRouter;

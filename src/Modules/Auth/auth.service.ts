@@ -23,7 +23,7 @@ const createCompany = async (req: Request, res: Response) => {
         throw new BadRequestError('Company With This Username Is Already Registered');
     }
     const hashPassword = bcrypt.hashSync(req.body.password, 10);
-    return userRepository.create({ ...req.body, password: hashPassword });
+    return userRepository.create({ ...req.body, password: hashPassword, role: 'COMPANY' });
 };
 
 const login = async (req: Request, res: Response) => {
@@ -44,8 +44,33 @@ const login = async (req: Request, res: Response) => {
     return { accessToken };
 };
 
+const createShop = async (req: Request) => {
+    const { username, password, role } = req.body;
+    const existingShop = await userRepository.findByUsername(username);
+    if (!existingShop) {
+        throw new BadRequestError('Shop with this username already exists');
+    }
+    const hashPassword = bcrypt.hashSync(password, 10);
+    const shopKeeper = await userRepository.create({ username, password: hashPassword, role });
+    const accessToken = TokenService.generateAccessToken({
+        _id: shopKeeper._id.toString(),
+        role: shopKeeper.role,
+    });
+    return { accessToken };
+};
+
+const validateUsername = async (req: Request) => {
+    const user = await userRepository.findByUsername(req.body.username);
+    if (user) {
+        throw new BadRequestError('Username is already taken');
+    }
+    return;
+};
+
 export default {
     createAdmin,
     createCompany,
     login,
+    createShop,
+    validateUsername,
 };

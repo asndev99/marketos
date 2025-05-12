@@ -16,3 +16,9 @@ export const login = z
         role: z.enum(roles),
     })
     .strict();
+
+export const validateUserNameSchema = z
+    .object({
+        username: baseStringSchema,
+    })
+    .strict();

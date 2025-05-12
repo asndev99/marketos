@@ -78,6 +78,14 @@ const companySchema: Schema<ICompanyDocument> = new Schema(
             type: String,
             required: false,
         },
+        isPopular: {
+            type: Boolean,
+            default: false,
+        },
+        popularityRate: {
+            type: Number,
+            default: 0,
+        },
     },
     {
         timestamps: true,
