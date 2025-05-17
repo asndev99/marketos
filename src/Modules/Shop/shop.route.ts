@@ -27,4 +27,11 @@ shopRouter.get(
     shopController.popularCompanies
 );
 
+shopRouter.get(
+    '/discounted-products',
+    verifyUser,
+    authorizeRole(UserRole.SHOPKEEPER),
+    shopController.discountedProducts
+);
+
 export default shopRouter;

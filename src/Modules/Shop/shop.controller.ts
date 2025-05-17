@@ -32,8 +32,19 @@ export const popularCompanies = async (req: Request, res: Response, next: NextFu
     }
 };
 
+export const discountedProducts = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const data = await shopHomeService.getDiscountedProducts(req);
+        return successResponse(res, 200, 'Discounted Products Fetched Successfully', data);
+    } catch (error) {
+        console.log('Error in getting discounted Products');
+        next(error);
+    }
+};
+
 export default {
     createProfile,
     getTopCategories,
     popularCompanies,
+    discountedProducts,
 };

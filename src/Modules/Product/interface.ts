@@ -5,11 +5,11 @@ export interface IProduct {
     description: String;
     category: String;
     sku: String;
-    price: Number;
+    price: number;
     currency: String;
     barcode: String;
-    discountedPrice: Number;
-    stockQuantity: Number;
+    discountedPrice: number;
+    stockQuantity: number;
     status: String;
     isDeleted: Boolean;
 }

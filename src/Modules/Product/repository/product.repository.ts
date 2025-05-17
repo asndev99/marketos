@@ -1,6 +1,7 @@
+import { paginationMeta } from '../../../Common/Interface';
 import { IProductDocument, ProductModel } from '../product.model';
 import { IProductImageDocument, ProductImageModel } from '../productImage.model';
-import { IProductRepository } from './product.repository.interface';
+import { FindManyOptions, IProductRepository } from './product.repository.interface';
 import { FilterQuery, Types } from 'mongoose';
 type NewProductImage = {
     image: string;
@@ -40,5 +41,36 @@ export class MongoProductRepository implements IProductRepository {
         await ProductModel.updateOne({ _id: id }, { $set: { isDeleted: true } });
         await ProductImageModel.updateMany({ productId: id }, { $set: { isDelete: true } });
         return true;
+    }
+
+    async FindMany(
+        payload: FindManyOptions
+    ): Promise<{ data: IProductDocument[]; meta: paginationMeta }> {
+        const {
+            filter = {},
+            sortBy = 'createdAt',
+            sortOrder = 'desc',
+            limit = 10,
+            page = 1,
+        } = payload;
+
+        const skip = (page - 1) * limit;
+        const sort: Record<string, 1 | -1> = {
+            [sortBy]: sortOrder === 'asc' ? 1 : -1,
+        };
+        const [products, count] = await Promise.all([
+            ProductModel.find(filter).skip(skip).sort(sort).lean(),
+            ProductModel.countDocuments(filter),
+        ]);
+
+        return {
+            data: products,
+            meta: {
+                limit,
+                page,
+                total: count,
+                totalPages: Math.ceil(count / limit),
+            },
+        };
     }
 }
