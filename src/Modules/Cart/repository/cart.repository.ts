@@ -1,4 +1,4 @@
-import { FilterQuery } from 'mongoose';
+import { FilterQuery, PopulateOptions } from 'mongoose';
 import { CartModel, ICartDocument } from '../cart.model';
 import { ICartRepository } from './interface';
 
@@ -32,9 +32,58 @@ export class MongoCartRepository implements ICartRepository {
 
     async findOne(
         payload: FilterQuery<ICartDocument>,
-        exclude: Record<string, 0 | 1> = {}
+        exclude: Record<string, 0 | 1> = {},
+        populate?: string | string[] | PopulateOptions | PopulateOptions[]
     ): Promise<ICartDocument | null> {
-        return CartModel.findOne(payload).select(exclude);
+        let query = CartModel.findOne(payload).select(exclude);
+
+        if (populate) {
+            query = query.populate(populate as any);
+        }
+
+        return query;
+    }
+    /**
+     * Finds multiple Cart documents based on the provided filter query.
+     *
+     * @param {FilterQuery<ICartDocument>} payload - MongoDB query object to filter documents.
+     * @param {Record<string, 0 | 1>} [exclude={}] - Fields to exclude (0) or include (1) from the result set.
+     * @param {string | string[] | PopulateOptions | PopulateOptions[]} [populate] - Fields or references to populate.
+     *
+     * @returns {Promise<ICartDocument[]>} - A promise that resolves to an array of cart documents.
+     *
+     * @example
+     * // Example 1: Simple find with field exclusion
+     * await findMany({ userId: "123" }, { __v: 0 });
+     *
+     * @example
+     * // Example 2: With populate string
+     * await findMany({ userId: "123" }, {}, "product");
+     *
+     * @example
+     * // Example 3: With populate options
+     * await findMany({ userId: "123" }, {}, { path: "product", select: "title price" });
+     *
+     * @example
+     * // Example 4: With multiple populate fields
+     * await findMany({ userId: "123" }, {}, [
+     *   { path: "product", select: "title" },
+     *   { path: "user", select: "name email" }
+     * ]);
+     */
+    // Mongoose populate() Method Accepts Multiple Types
+    async findMany(
+        payload: FilterQuery<ICartDocument>,
+        exclude: Record<string, 0 | 1> = {},
+        populate?: string | string[] | PopulateOptions | PopulateOptions[]
+    ): Promise<ICartDocument[]> {
+        let query = CartModel.find(payload).select(exclude);
+
+        if (populate) {
+            query = query.populate(populate as PopulateOptions | (string | PopulateOptions)[]);
+        }
+
+        return query;
     }
 
     async findOneAndDelete(options: FilterQuery<ICartDocument>): Promise<ICartDocument | null> {

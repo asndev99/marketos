@@ -1,4 +1,4 @@
-import { FilterQuery } from 'mongoose';
+import { FilterQuery, PopulateOptions } from 'mongoose';
 import { ICartDocument } from '../cart.model';
 
 export interface ICartRepository {
@@ -12,7 +12,8 @@ export interface ICartRepository {
 
     findOne(
         payload: FilterQuery<ICartDocument>,
-        exclude?: Record<string, 0 | 1>
+        exclude?: Record<string, 0 | 1>,
+        populate?: string | string[] | PopulateOptions | PopulateOptions[]
     ): Promise<ICartDocument | null>;
 
     findOneAndDelete(options: FilterQuery<ICartDocument>): Promise<ICartDocument | null>;
@@ -27,4 +28,10 @@ export interface ICartRepository {
         cartId: string;
         shopId: string;
     }): Promise<ICartDocument | null>;
+
+    findMany(
+        payload: FilterQuery<ICartDocument>,
+        exclude?: Record<string, 0 | 1>,
+        populate?: string | string[] | PopulateOptions | PopulateOptions[]
+    ): Promise<ICartDocument[] | []>;
 }

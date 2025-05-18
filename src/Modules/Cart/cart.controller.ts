@@ -13,6 +13,28 @@ const addToCart = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
+const getMyCart = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const data = await cartService.getCartItems(req);
+        return successResponse(res, 200, 'Cart Items Fetched Successfully', data);
+    } catch (error) {
+        console.log('Error in getting my cart', error);
+        next(error);
+    }
+};
+
+const removeFromCart = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        await cartService.removeFromCart(req);
+        return successResponse(res, 200, 'Cart Items Fetched Successfully', null);
+    } catch (error) {
+        console.log('Error in removing from cart');
+        next(error);
+    }
+};
+
 export default {
     addToCart,
+    getMyCart,
+    removeFromCart,
 };
