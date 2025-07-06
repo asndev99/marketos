@@ -18,3 +18,8 @@ export interface IProductImage {
     productId: Types.ObjectId;
     image: string;
 }
+
+export interface IProductPopulatedDocument extends IProduct {
+    _id: Types.ObjectId;
+    images: IProductImage[];
+}

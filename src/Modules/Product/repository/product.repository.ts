@@ -1,4 +1,5 @@
 import { paginationMeta } from '../../../Common/Interface';
+import { IProductPopulatedDocument } from '../interface';
 import { IProductDocument, ProductModel } from '../product.model';
 import { IProductImageDocument, ProductImageModel } from '../productImage.model';
 import { FindManyOptions, IProductRepository } from './product.repository.interface';
@@ -25,10 +26,12 @@ export class MongoProductRepository implements IProductRepository {
             .populate('images')
             .exec();
     }
-    async findOneProduct(payload: FilterQuery<IProductDocument>): Promise<IProductDocument | null> {
+    async findOneProduct(
+        payload: FilterQuery<IProductDocument>
+    ): Promise<IProductPopulatedDocument | null> {
         return ProductModel.findOne({ isDeleted: false, ...payload })
             .populate('images')
-            .exec();
+            .exec() as Promise<IProductPopulatedDocument | null>;
     }
     async deleteProductImages(payload: { _id: Types.ObjectId }[]): Promise<Object> {
         const ids = payload.map((p) => p._id);

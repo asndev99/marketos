@@ -2,6 +2,8 @@ import express, { Application } from 'express';
 import { globalErrorHandler } from './Middlewares/global.errorhandler.middleware';
 // import adminRouter from "./Modules/Admin/admin.router";
 import appRoutes from './index.routing';
+import dotenv from "dotenv";
+dotenv.config();
 
 export default async (app: Application) => {
     app.use(express.json());

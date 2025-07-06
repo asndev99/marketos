@@ -8,33 +8,33 @@ import { createUploadMiddleware } from '../../Middlewares/formData/multer.middle
 const productRouter = require('express').Router();
 
 productRouter.post(
-    '/add-product',
+    '/',
     verifyUser,
     createUploadMiddleware([{ name: 'productImage', maxCount: 4, required: true }]),
     authorizeRole(UserRole.COMPANY),
     productController.createProduct
 );
 productRouter.get(
-    '/get-product',
+    '/',
     verifyUser,
     authorizeRole(UserRole.COMPANY),
     productController.fetchAllProduct
 );
 productRouter.get(
-    '/get-product/:id',
+    '/:id',
     verifyUser,
     authorizeRole(UserRole.COMPANY),
     productController.fetchProductDetails
 );
 productRouter.patch(
-    '/edit-product/:id',
+    '/:id',
     verifyUser,
     createUploadMiddleware([]),
     authorizeRole(UserRole.COMPANY),
     productController.updateProductDetails
 );
 productRouter.delete(
-    '/delete-product/:id',
+    '/:id',
     verifyUser,
     authorizeRole(UserRole.COMPANY),
     productController.deleteProduct
