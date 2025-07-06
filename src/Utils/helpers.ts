@@ -1,6 +1,8 @@
 import { v2 as cloudinary } from 'cloudinary';
 import { UploadApiResponse, UploadApiErrorResponse } from 'cloudinary';
 import { Readable } from 'stream';
+import dotenv from "dotenv";
+dotenv.config();
 
 cloudinary.config({
     cloud_name: process.env.cloud_name as string,

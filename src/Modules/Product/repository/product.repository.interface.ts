@@ -1,5 +1,5 @@
 import { paginationMeta } from '../../../Common/Interface';
-import { IProduct, IProductImage } from '../interface';
+import { IProduct, IProductImage, IProductPopulatedDocument } from '../interface';
 import { IProductDocument } from '../product.model';
 import { FilterQuery, Types } from 'mongoose';
 type NewProductImage = {
@@ -22,7 +22,9 @@ export interface IProductRepository {
     findOne(payload: FilterQuery<IProductDocument>): Promise<IProductDocument | null>;
     createImage(data: NewProductImage[]): Promise<IProductImage[]>;
     findAll(payload: FilterQuery<IProduct>): Promise<IProduct[]>;
-    findOneProduct(payload: FilterQuery<IProductDocument>): Promise<IProductDocument | null>;
+    findOneProduct(
+        payload: FilterQuery<IProductDocument>
+    ): Promise<IProductPopulatedDocument | null>;
     deleteProductImages(payload: Images[]): Promise<Object>;
     updateProduct(id: Types.ObjectId, data: Partial<IProduct>): Promise<Object>;
     deleteProduct(id: Types.ObjectId): Promise<Boolean>;
