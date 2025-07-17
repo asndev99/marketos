@@ -11,7 +11,6 @@ companyRouter.post(
     verifyUser,
     authorizeRole(UserRole.COMPANY),
     createUploadMiddleware([
-        { name: 'coverPhoto', maxCount: 1, required: false },
         { name: 'logo', maxCount: 1, required: true },
     ]),
     companyController.createProfile

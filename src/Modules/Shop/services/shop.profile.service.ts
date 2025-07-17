@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { ShopRepository } from '../repository/shop.repository';
-import { BadRequestError } from '../../../Utils/Error';
+import { BadRequestError, NotFoundError } from '../../../Utils/Error';
 import { MongoUserRepository } from '../../User/repository/user.repository';
 import bcrypt from 'bcrypt';
 import { UserRole } from '../../../Common/constants';
@@ -42,7 +42,13 @@ const completeShopProfileDetails = async (req: Request) => {
         accessToken,
     };
 };
+const getProfile = async (req: Request) => {
+    const data = await shopRepository.findOne({_id: req.user._id});
+    if(!data) throw new NotFoundError("Shop Not Found");
 
+    return data;
+}
 export default {
     completeShopProfileDetails,
+    getProfile
 };

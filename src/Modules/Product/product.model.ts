@@ -24,6 +24,7 @@ const productSchema: Schema<IProductDocument> = new Schema(
         sku: {
             type: String,
             required: false,
+            default: null
         },
         price: {
             type: Number,
@@ -36,14 +37,17 @@ const productSchema: Schema<IProductDocument> = new Schema(
         barcode: {
             type: String,
             required: false,
+            default: null
         },
         discountedPrice: {
             type: Number,
             required: false,
+            default: null
         },
         stockQuantity: {
             type: Number,
             required: false,
+            default: null
         },
         status: {
             type: String,

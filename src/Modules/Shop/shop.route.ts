@@ -8,9 +8,15 @@ import { UserRole } from '../../Common/constants';
 const shopRouter = express.Router();
 
 shopRouter.post(
-    '/create-profile',
+    '/profile',
     validateSchema(createShopProfileSchema),
     shopController.createProfile
+);
+shopRouter.get(
+    '/profile',
+    verifyUser,
+    authorizeRole(UserRole.SHOPKEEPER),
+    shopController.getProfile
 );
 
 shopRouter.get(

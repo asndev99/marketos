@@ -8,6 +8,6 @@ export class ShopRepository implements IShopRepository {
     }
 
     async findOne(data: FilterQuery<IShopDocument>): Promise<IShopDocument | null> {
-        return ShopModel.findOne(data);
+        return ShopModel.findOne();
     }
 }

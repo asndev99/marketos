@@ -15,9 +15,7 @@ export interface ICompany {
     contactNumber: String;
     contactEmail: string;
     alternativeNumber: String;
-    numOfDistribution: Number;
     profileLogo: String;
-    coverPhoto: String;
     isPopular: Boolean;
     popularityRate: Number;
 }

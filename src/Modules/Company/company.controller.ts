@@ -1,21 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { successResponse } from "../../Utils/Response";
-import companyService from './services/company.profile.service';
+import companyService from './company.service';
 interface MulterRequest extends Request {
   files: {
       [fieldname: string]: Express.Multer.File[]
   }
 }
-
-const loginCompany = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-      // const data = await companyService.login(req, res);
-      // return successResponse(res, 200, "Successfully Logged in ", data);
-  } catch (error) {
-    console.log("Error in logging in admin", error);
-    next(error);
-  }
-};
 
 const createProfile = async (req: MulterRequest, res: Response, next: NextFunction) => {
   try {
@@ -38,7 +28,6 @@ const getProfile = async (req: MulterRequest, res: Response, next: NextFunction)
 };
 
 export default {
-  loginCompany,
   createProfile,
   getProfile
 };

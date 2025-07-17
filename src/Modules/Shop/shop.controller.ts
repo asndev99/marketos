@@ -12,6 +12,15 @@ export const createProfile = async (req: Request, res: Response, next: NextFunct
         next(error);
     }
 };
+export const getProfile = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const data = await shopProfileService.getProfile(req);
+        return successResponse(res, 200, 'Profile Fetched Successfully', data);
+    } catch (error) {
+        console.log('Error in getting shop profile', error);
+        next(error);
+    }
+};
 export const getTopCategories = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const data = await shopHomeService.getCategories(req);
@@ -44,6 +53,7 @@ export const discountedProducts = async (req: Request, res: Response, next: Next
 
 export default {
     createProfile,
+    getProfile,
     getTopCategories,
     popularCompanies,
     discountedProducts,

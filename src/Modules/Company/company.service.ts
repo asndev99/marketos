@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { BadRequestError } from '../../../Utils/Error';
-import { MongoCompanyRepository } from '../repository/company.repository';
-import { uploadBufferToCloudinary } from '../../../Utils/helpers';
+import { BadRequestError } from '../../Utils/Error';
+import { MongoCompanyRepository } from './repository/company.repository';
+import { uploadBufferToCloudinary } from '../../Utils/helpers';
 
 const companyRepository = new MongoCompanyRepository();
 
@@ -9,7 +9,6 @@ const createCompanyDetails = async (req: Request, res: Response) => {
     
     let { numOfDistribution, companyName } = req.body;
     const files = req.files as Record<string, Express.Multer.File[]>;
-    const coverPhotoFile = files['coverPhoto']?.[0];
     const logoFile = files['logo']?.[0];
     const userId = req.user._id;
 
@@ -23,12 +22,6 @@ const createCompanyDetails = async (req: Request, res: Response) => {
         throw new BadRequestError('Company already Created');
     }
 
-    const { url: coverPhoto } = await uploadBufferToCloudinary(
-        coverPhotoFile.buffer,
-        coverPhotoFile.originalname,
-        'companies'
-    );
-
     const { url: logo } = await uploadBufferToCloudinary(
         logoFile.buffer,
         logoFile.originalname,
@@ -38,7 +31,6 @@ const createCompanyDetails = async (req: Request, res: Response) => {
     return companyRepository.create({
         userId,
         ...req.body,
-        coverPhoto: coverPhoto,
         profileLogo: logo,
     });
 };

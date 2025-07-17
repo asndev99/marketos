@@ -66,17 +66,9 @@ const companySchema: Schema<ICompanyDocument> = new Schema(
             type: String,
             required: true,
         },
-        numOfDistribution: {
-            type: Number,
-            required: true,
-        },
         profileLogo: {
             type: String,
-            required: false,
-        },
-        coverPhoto: {
-            type: String,
-            required: false,
+            required: true,
         },
         isPopular: {
             type: Boolean,

@@ -29,7 +29,7 @@ productRouter.get(
 productRouter.patch(
     '/:id',
     verifyUser,
-    createUploadMiddleware([]),
+    createUploadMiddleware([{ name: 'productImage', maxCount: 4, required: false }]),
     authorizeRole(UserRole.COMPANY),
     productController.updateProductDetails
 );

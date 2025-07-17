@@ -53,6 +53,9 @@ const getAllProducts = async (req: Request, res: Response) => {
 const getProduct = async (req: Request, res: Response) => {
     const userId = req?.user?._id;
     const { id } = req?.params;
+    if (!Types.ObjectId.isValid(id)) {
+        throw new BadRequestError('Invalid product ID');
+    }
     const companyDetails = await companyRepository.findOne({ userId });
     if (!companyDetails) {
         throw new BadRequestError('Company Not Found');
@@ -73,6 +76,8 @@ const editProduct = async (req: MulterRequest, res: Response) => {
     if (!companyDetails) {
         throw new BadRequestError('Company Not Found');
     }
+    const data = await productRepository.findOneProduct({ _id: id });
+    if (!data) throw new NotFoundError('Product not found !');
 
     if (Array.isArray(req.body?.imageIDs)) {
         const ids = req.body.imageIDs.map((id: string) => ({
