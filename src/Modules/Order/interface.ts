@@ -1,12 +1,11 @@
 import { Types } from 'mongoose';
-export interface IUserOrder {
-    orderTime: Date;
-    orderTimeEpoch: number;
-    totalPrice: number;
-    trackingNumber: string;
-    orderID: string;
-    paymentStatus: 'PENDING' | 'PAID' | 'FAILED';
-    userId: Types.ObjectId;
+import { PaymentStatus, PaymentMethod, OrderStatus } from '../../Common/constants';
+
+export interface IPaymentTransaction {
+    orderProductId: Types.ObjectId;
+    companyId: Types.ObjectId;
+    amount: number;
+    paymentStatus?: PaymentStatus;
 }
 
 export interface IOrderProduct {
@@ -15,21 +14,40 @@ export interface IOrderProduct {
     companyId: Types.ObjectId;
     quantity?: number;
     price: number;
-    orderTimePrice: number;
+    orderTimeUnitProductPrice: number;
     isOrderPlaced?: boolean;
-    orderStatus?: 'NEW' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
+    orderStatus?: OrderStatus;
+    PaymentMethod?: PaymentMethod;
     cancelReason?: string;
 }
 
-export interface IOrderProductStatusHistory {
-    orderProductId: Types.ObjectId;
-    status: 'NEW' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED';
-    changedAt?: Date;
+export interface IUserOrder {
+    orderTime: Date;
+    orderTimeEpoch: number;
+    totalPrice: number;
+    trackingNumber: string;
+    orderID: string;
+    userId: Types.ObjectId;
 }
 
-export interface IPaymentTransaction {
-    orderProductId: Types.ObjectId;
-    companyId: Types.ObjectId;
-    amount: number;
-    paymentStatus?: 'PENDING' | 'COMPLETED' | 'REFUNDED';
+export interface IPaymentTransactionPopulated extends IPaymentTransaction {
+  _id: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: number;
+}
+
+export interface IOrderProductPopulatedDocument extends IOrderProduct {
+    _id: Types.ObjectId;
+    createdAt: Date;
+    updatedAt: Date;
+    __v: number;
+    paymentTransaction: IPaymentTransactionPopulated;
+}
+export interface IUserOrderPopulatedDocument extends IUserOrder {
+    _id: Types.ObjectId;
+    createdAt: Date;
+    updatedAt: Date;
+    __v: number;
+    orderProducts: IOrderProductPopulatedDocument[];
 }

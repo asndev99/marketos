@@ -6,6 +6,22 @@ export enum UserRole {
     BOOKKEEPER = 'BOOKKEEPER',
 }
 
+export enum PaymentStatus {
+    PENDING = 'PENDING',
+    COMPLETED = 'COMPLETED',
+    Received = 'Received'
+}
+
+export enum PaymentMethod {
+    CASH = 'CASH',
+    CREDIT = 'CREDIT'
+}
+export enum OrderStatus {
+    NEW = 'NEW',
+    DELIVERED = 'DELIVERED',
+    CANCELLED = 'CANCELLED',
+}
+
 export interface JwtVerifiedPayload {
     id: string;
     role: UserRole;

@@ -3,6 +3,7 @@ import { UploadApiResponse, UploadApiErrorResponse } from 'cloudinary';
 import { Readable } from 'stream';
 import dotenv from "dotenv";
 dotenv.config();
+import { v4 as uuidv4 } from 'uuid';
 
 cloudinary.config({
     cloud_name: process.env.cloud_name as string,
@@ -56,3 +57,14 @@ export const paginate = (page: number = 1, pageSize: number = 10) => {
         limit: pageSize,
     };
 };
+
+
+export const generateOrderID = (): string => {
+  const now = new Date();
+  const datePart = now.toISOString().slice(0, 10).replace(/-/g, '');
+  const randomPart = uuidv4().replace(/-/g, '').substring(0, 10).toUpperCase();
+  return `ORD-${datePart}-${randomPart}`;
+}
+export const generateTrackingNumber =(): string => {
+  return `TRK-${uuidv4().replace(/-/g, '').substring(0, 10).toUpperCase()}`;
+}

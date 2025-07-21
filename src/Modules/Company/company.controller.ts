@@ -27,7 +27,18 @@ const getProfile = async (req: MulterRequest, res: Response, next: NextFunction)
   }
 };
 
+const getOrders = async (req: MulterRequest, res: Response, next: NextFunction) => {
+  try {
+    const data = await companyService.allOrders(req, res);
+    return successResponse(res, 200, "Get All companies orders Successfully", data);
+  } catch (error) {
+    console.log("Error in fetching all orders", error);
+    next(error);
+  }
+};
+
 export default {
   createProfile,
-  getProfile
+  getProfile,
+  getOrders
 };

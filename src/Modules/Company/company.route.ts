@@ -17,4 +17,5 @@ companyRouter.post(
 );
 
 companyRouter.get('/', verifyUser, authorizeRole(UserRole.COMPANY), companyController.getProfile);
+companyRouter.get('/orders', verifyUser, authorizeRole(UserRole.COMPANY), companyController.getOrders);
 export default companyRouter;
