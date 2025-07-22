@@ -4,11 +4,12 @@ import { MongoCompanyRepository } from './repository/company.repository';
 import { MongoUserRepository } from '../User/repository/user.repository';
 import { uploadBufferToCloudinary } from '../../Utils/helpers';
 import { MongoOrderRepository } from '../Order/repository/order.repository';
-import { IOrderProductPopulatedDocument } from '../Order/interface';
+import { ShopRepository } from '../Shop/repository/shop.repository';
 
 const companyRepository = new MongoCompanyRepository();
 const userRepository = new MongoUserRepository();
 const orderRepository = new MongoOrderRepository();
+const shopRepository = new ShopRepository();
 
 const createCompanyDetails = async (req: Request, res: Response) => {
     let { numOfDistribution, companyName } = req.body;
@@ -47,25 +48,61 @@ const getCompanyDetails = async (req: Request, res: Response) => {
 const allOrders = async (req: Request, res: Response) => {
     const company = await companyRepository.findOne({ userId: req.user._id });
     const companyId: string = company?.id.toString();
-    console.log('companyId: ', companyId);
     const orders = await orderRepository.allOrdersForCompany(companyId);
 
-    const groupedByOrderId: Record<string, IOrderProductPopulatedDocument[]> = orders.reduce(
-        (acc, item) => {
-            const orderId = item.orderId.toString();
-            if (!acc[orderId]) {
-                acc[orderId] = [];
+    const userCache = new Map<string, any>();
+    let result: any = [];
+    await Promise.all(
+        orders.map(async (order) => {
+            const userId = order?.userId.toString();
+            let user;
+            if (userCache.has(userId)) {
+                user = userCache.get(userId);
+            } else {
+                user = await userRepository.findById(userId);
+                const shopkeeper = await shopRepository.findOne({ userId: userId });
+                if (user && shopkeeper)
+                    userCache.set(userId, {
+                        ownerName: shopkeeper?.ownerName,
+                        shopName: shopkeeper?.shopName,
+                        mobileNumber: shopkeeper?.mobileNumber,
+                        shopAddress: shopkeeper?.shopAddress,
+                        landmark: shopkeeper?.landMark,
+                        latitude: shopkeeper?.latitude,
+                        longitude: shopkeeper?.longitude,
+                    });
             }
-            acc[orderId].push(item);
-            return acc;
-        },
-        {} as Record<string, IOrderProductPopulatedDocument[]>
-    );
+            let total = 0;
+            let products = order?.orderProducts.map((product) => {
+                total = total + product?.price;
+                return {
+                    orderProductId: product?._id,
+                    productId: product?.productId,
+                    quantity: product?.quantity,
+                    price: product?.price,
+                    orderTimeUnitProductPrice: product?.orderTimeUnitProductPrice,
+                    isOrderPlaced: product?.isOrderPlaced,
+                    orderStatus: product?.orderStatus,
+                    PaymentMethod: product?.PaymentMethod,
+                    paymentTransaction: {
+                        paymentId: product?.paymentTransaction?._id,
+                        amount: product?.paymentTransaction?.amount,
+                        paymentStatus: product?.paymentTransaction?.paymentStatus,
+                    },
+                };
+            });
 
-    const result = Object.entries(groupedByOrderId).map(([orderId, products]) => ({
-        orderId,
-        products,
-    }));
+            result.push({
+                _id: order?._id,
+                trackingNumber: order?.trackingNumber,
+                orderID: order?.orderID,
+                orderTime: order?.orderTime,
+                orderTimeEpoch: order?.orderTimeEpoch,
+                totalAmount: total,
+                products,
+            });
+        })
+    );
     return result;
 };
 

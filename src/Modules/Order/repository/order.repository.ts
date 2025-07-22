@@ -59,12 +59,55 @@ export class MongoOrderRepository implements IOrderRepository {
             .lean<IUserOrderPopulatedDocument>()
             .exec();
     }
-    async allOrdersForCompany(companyId: string): Promise<IOrderProductPopulatedDocument[]> {
-        return OrderProductModel.find({ companyId })
-            .populate({
-                path: 'paymentTransaction',
-            })
-            .lean<IOrderProductPopulatedDocument[]>()
-            .exec();
+
+    async allOrdersForCompany(companyId: string): Promise<IUserOrderPopulatedDocument[]> {
+        const userOrders = await UserOrderModel.aggregate([
+            {
+                $lookup: {
+                    from: 'orderproducts',
+                    localField: '_id',
+                    foreignField: 'orderId',
+                    as: 'orderProducts',
+                },
+            },
+            {
+                $unwind: '$orderProducts',
+            },
+            {
+                $match: {
+                    'orderProducts.companyId': new Types.ObjectId(companyId),
+                },
+            },
+            {
+                $lookup: {
+                    from: 'paymenttransactions',
+                    localField: 'orderProducts._id',
+                    foreignField: 'orderProductId',
+                    as: 'orderProducts.paymentTransaction',
+                },
+            },
+            {
+                $unwind: {
+                    path: '$orderProducts.paymentTransaction',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $group: {
+                    _id: '$_id',
+                    orderTime: { $first: '$orderTime' },
+                    orderTimeEpoch: { $first: '$orderTimeEpoch' },
+                    totalPrice: { $first: '$totalPrice' },
+                    trackingNumber: { $first: '$trackingNumber' },
+                    orderID: { $first: '$orderID' },
+                    userId: { $first: '$userId' },
+                    createdAt: { $first: '$createdAt' },
+                    updatedAt: { $first: '$updatedAt' },
+                    orderProducts: { $push: '$orderProducts' },
+                },
+            },
+        ]);
+
+        return userOrders;
     }
 }

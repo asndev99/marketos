@@ -57,15 +57,6 @@ const PaymentTransactionSchema: Schema<IPaymentTransactionDocument> = new Schema
     { timestamps: true }
 );
 
-// productSchema.virtual('images', {
-//     ref: 'ProductImage',
-//     localField: '_id',
-//     foreignField: 'productId',
-// });
-
-// productSchema.set('toObject', { virtuals: true });
-// productSchema.set('toJSON', { virtuals: true });
-
 UserOrderSchema.virtual('orderProducts', {
     ref: 'OrderProduct',
     localField: '_id',

@@ -17,5 +17,5 @@ export interface IOrderRepository{
     createPaymentTransaction(data: IPaymentTransaction[], session: ClientSession): Promise<IPaymentTransactionDocument[]>;
     allOrders(payload: FilterQuery<IUserOrderDocument>): Promise<IUserOrderPopulatedDocument[]>;
     singleOrder(payload: FilterQuery<IUserOrderDocument>): Promise<IUserOrderPopulatedDocument | null>;
-    allOrdersForCompany(payload: string): Promise<IOrderProductPopulatedDocument[]>;
+    allOrdersForCompany(payload: string): Promise<IUserOrderPopulatedDocument[]>;
 }
