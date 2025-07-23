@@ -93,6 +93,28 @@ export class MongoOrderRepository implements IOrderRepository {
                 },
             },
             {
+                $lookup: {
+                    from: 'products',
+                    localField: 'orderProducts.productId',
+                    foreignField: '_id',
+                    as: 'orderProducts.product',
+                },
+            },
+            {
+                $unwind: {
+                    path: '$orderProducts.product',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: 'productimages',
+                    localField: 'orderProducts.product._id',
+                    foreignField: 'productId',
+                    as: 'orderProducts.product.images',
+                },
+            },
+            {
                 $group: {
                     _id: '$_id',
                     orderTime: { $first: '$orderTime' },
@@ -109,5 +131,86 @@ export class MongoOrderRepository implements IOrderRepository {
         ]);
 
         return userOrders;
+    }
+
+    async singleOrderForCompany(
+        orderId: string,
+        companyId: string
+    ): Promise<IUserOrderPopulatedDocument[]> {
+        const userOrder = await UserOrderModel.aggregate([
+            {
+                $match: {
+                    _id: new Types.ObjectId(orderId),
+                },
+            },
+            {
+                $lookup: {
+                    from: 'orderproducts',
+                    localField: '_id',
+                    foreignField: 'orderId',
+                    as: 'orderProducts',
+                },
+            },
+            {
+                $unwind: '$orderProducts',
+            },
+            {
+                $match: {
+                    'orderProducts.companyId': new Types.ObjectId(companyId),
+                },
+            },
+            {
+                $lookup: {
+                    from: 'paymenttransactions',
+                    localField: 'orderProducts._id',
+                    foreignField: 'orderProductId',
+                    as: 'orderProducts.paymentTransaction',
+                },
+            },
+            {
+                $unwind: {
+                    path: '$orderProducts.paymentTransaction',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'orderProducts.productId',
+                    foreignField: '_id',
+                    as: 'orderProducts.product',
+                },
+            },
+            {
+                $unwind: {
+                    path: '$orderProducts.product',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: 'productimages',
+                    localField: 'orderProducts.product._id',
+                    foreignField: 'productId',
+                    as: 'orderProducts.product.images',
+                },
+            },
+            {
+                $group: {
+                    _id: '$_id',
+                    orderTime: { $first: '$orderTime' },
+                    orderTimeEpoch: { $first: '$orderTimeEpoch' },
+                    totalPrice: { $first: '$totalPrice' },
+                    trackingNumber: { $first: '$trackingNumber' },
+                    orderID: { $first: '$orderID' },
+                    userId: { $first: '$userId' },
+                    createdAt: { $first: '$createdAt' },
+                    updatedAt: { $first: '$updatedAt' },
+                    orderProducts: { $push: '$orderProducts' },
+                },
+            },
+        ]);
+
+        return userOrder;
     }
 }

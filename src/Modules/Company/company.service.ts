@@ -50,44 +50,49 @@ const allOrders = async (req: Request, res: Response) => {
     const companyId: string = company?.id.toString();
     const orders = await orderRepository.allOrdersForCompany(companyId);
 
+    const uniqueUserIds = [...new Set(orders.map((o) => o.userId.toString()))];
     const userCache = new Map<string, any>();
+    await Promise.all(
+        uniqueUserIds.map(async (userId) => {
+            const user = await userRepository.findById(userId);
+            const shopkeeper = await shopRepository.findOne({ userId });
+
+            if (user && shopkeeper) {
+                userCache.set(userId, {
+                    ownerName: shopkeeper.ownerName,
+                    shopName: shopkeeper.shopName,
+                    mobileNumber: shopkeeper.mobileNumber,
+                    shopAddress: shopkeeper.shopAddress,
+                    landmark: shopkeeper.landMark,
+                    latitude: shopkeeper.latitude,
+                    longitude: shopkeeper.longitude,
+                });
+            }
+        })
+    );
+
     let result: any = [];
     await Promise.all(
         orders.map(async (order) => {
             const userId = order?.userId.toString();
-            let user;
-            if (userCache.has(userId)) {
-                user = userCache.get(userId);
-            } else {
-                user = await userRepository.findById(userId);
-                const shopkeeper = await shopRepository.findOne({ userId: userId });
-                if (user && shopkeeper)
-                    userCache.set(userId, {
-                        ownerName: shopkeeper?.ownerName,
-                        shopName: shopkeeper?.shopName,
-                        mobileNumber: shopkeeper?.mobileNumber,
-                        shopAddress: shopkeeper?.shopAddress,
-                        landmark: shopkeeper?.landMark,
-                        latitude: shopkeeper?.latitude,
-                        longitude: shopkeeper?.longitude,
-                    });
-            }
             let total = 0;
-            let products = order?.orderProducts.map((product) => {
-                total = total + product?.price;
+            let products = order?.orderProducts.map((orderproduct) => {
+                total = total + orderproduct?.price;
                 return {
-                    orderProductId: product?._id,
-                    productId: product?.productId,
-                    quantity: product?.quantity,
-                    price: product?.price,
-                    orderTimeUnitProductPrice: product?.orderTimeUnitProductPrice,
-                    isOrderPlaced: product?.isOrderPlaced,
-                    orderStatus: product?.orderStatus,
-                    PaymentMethod: product?.PaymentMethod,
+                    orderProductId: orderproduct?._id,
+                    productId: orderproduct?.productId,
+                    productName: orderproduct?.product?.name,
+                    productImage: orderproduct?.product?.images[0]?.image,
+                    quantity: orderproduct?.quantity,
+                    price: orderproduct?.price,
+                    orderTimeUnitProductPrice: orderproduct?.orderTimeUnitProductPrice,
+                    isOrderPlaced: orderproduct?.isOrderPlaced,
+                    orderStatus: orderproduct?.orderStatus,
+                    PaymentMethod: orderproduct?.PaymentMethod,
                     paymentTransaction: {
-                        paymentId: product?.paymentTransaction?._id,
-                        amount: product?.paymentTransaction?.amount,
-                        paymentStatus: product?.paymentTransaction?.paymentStatus,
+                        paymentId: orderproduct?.paymentTransaction?._id,
+                        amount: orderproduct?.paymentTransaction?.amount,
+                        paymentStatus: orderproduct?.paymentTransaction?.paymentStatus,
                     },
                 };
             });
@@ -99,6 +104,7 @@ const allOrders = async (req: Request, res: Response) => {
                 orderTime: order?.orderTime,
                 orderTimeEpoch: order?.orderTimeEpoch,
                 totalAmount: total,
+                shopkeeprDetails: userCache.get(userId),
                 products,
             });
         })
@@ -106,8 +112,62 @@ const allOrders = async (req: Request, res: Response) => {
     return result;
 };
 
+const singleOrder = async (req: Request, res: Response) => {
+    const company = await companyRepository.findOne({ userId: req.user._id });
+    const companyId: string = company?.id.toString();
+    const orderId = req.params.id;
+    const orders = await orderRepository.singleOrderForCompany(orderId, companyId);
+
+    const order = orders[0];
+    const userId = order?.userId.toString();
+
+    const user = await userRepository.findById(userId);
+    const shopkeeper = await shopRepository.findOne({ userId });
+    let total = 0;
+    let products = order?.orderProducts.map((orderproduct) => {
+        total = total + orderproduct?.price;
+        return {
+            orderProductId: orderproduct?._id,
+            productId: orderproduct?.productId,
+            productName: orderproduct?.product?.name,
+            productImage: orderproduct?.product?.images[0]?.image,
+            quantity: orderproduct?.quantity,
+            price: orderproduct?.price,
+            orderTimeUnitProductPrice: orderproduct?.orderTimeUnitProductPrice,
+            isOrderPlaced: orderproduct?.isOrderPlaced,
+            orderStatus: orderproduct?.orderStatus,
+            PaymentMethod: orderproduct?.PaymentMethod,
+            paymentTransaction: {
+                paymentId: orderproduct?.paymentTransaction?._id,
+                amount: orderproduct?.paymentTransaction?.amount,
+                paymentStatus: orderproduct?.paymentTransaction?.paymentStatus,
+            },
+        };
+    });
+
+    return {
+        _id: order?._id,
+        trackingNumber: order?.trackingNumber,
+        orderID: order?.orderID,
+        orderTime: order?.orderTime,
+        orderTimeEpoch: order?.orderTimeEpoch,
+        totalAmount: total,
+        shopkeeperDetails: {
+            ownerName: shopkeeper?.ownerName,
+            shopName: shopkeeper?.shopName,
+            mobileNumber: shopkeeper?.mobileNumber,
+            shopAddress: shopkeeper?.shopAddress,
+            landmark: shopkeeper?.landMark,
+            latitude: shopkeeper?.latitude,
+            longitude: shopkeeper?.longitude,
+        },
+        products,
+    };
+};
+
 export default {
     createCompanyDetails,
     getCompanyDetails,
     allOrders,
+    singleOrder
 };

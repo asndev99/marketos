@@ -18,4 +18,5 @@ export interface IOrderRepository{
     allOrders(payload: FilterQuery<IUserOrderDocument>): Promise<IUserOrderPopulatedDocument[]>;
     singleOrder(payload: FilterQuery<IUserOrderDocument>): Promise<IUserOrderPopulatedDocument | null>;
     allOrdersForCompany(payload: string): Promise<IUserOrderPopulatedDocument[]>;
+    singleOrderForCompany(orderId: string, companyId: string): Promise<IUserOrderPopulatedDocument[]>;
 }

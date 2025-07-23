@@ -1,5 +1,6 @@
 import { Types } from 'mongoose';
 import { PaymentStatus, PaymentMethod, OrderStatus } from '../../Common/constants';
+import { IProductPopulatedDocument } from '../Product/interface';
 
 export interface IPaymentTransaction {
     orderProductId: Types.ObjectId;
@@ -43,7 +44,9 @@ export interface IOrderProductPopulatedDocument extends IOrderProduct {
     updatedAt: Date;
     __v: number;
     paymentTransaction: IPaymentTransactionPopulated;
+    product: IProductPopulatedDocument
 }
+
 export interface IUserOrderPopulatedDocument extends IUserOrder {
     _id: Types.ObjectId;
     createdAt: Date;

@@ -30,7 +30,17 @@ const getProfile = async (req: MulterRequest, res: Response, next: NextFunction)
 const getOrders = async (req: MulterRequest, res: Response, next: NextFunction) => {
   try {
     const data = await companyService.allOrders(req, res);
-    return successResponse(res, 200, "Get All companies orders Successfully", data);
+    return successResponse(res, 200, "Get All company orders Successfully", data);
+  } catch (error) {
+    console.log("Error in fetching all orders", error);
+    next(error);
+  }
+};
+
+const getOrder = async (req: MulterRequest, res: Response, next: NextFunction) => {
+  try {
+    const data = await companyService.singleOrder(req, res);
+    return successResponse(res, 200, "Get order details Successfully", data);
   } catch (error) {
     console.log("Error in fetching all orders", error);
     next(error);
@@ -40,5 +50,6 @@ const getOrders = async (req: MulterRequest, res: Response, next: NextFunction) 
 export default {
   createProfile,
   getProfile,
-  getOrders
+  getOrders,
+  getOrder
 };
