@@ -116,9 +116,8 @@ const singleOrder = async (req: Request, res: Response) => {
     const company = await companyRepository.findOne({ userId: req.user._id });
     const companyId: string = company?.id.toString();
     const orderId = req.params.id;
-    const orders = await orderRepository.singleOrderForCompany(orderId, companyId);
+    const order = await orderRepository.singleOrderForCompany(orderId, companyId);
 
-    const order = orders[0];
     const userId = order?.userId.toString();
 
     const user = await userRepository.findById(userId);

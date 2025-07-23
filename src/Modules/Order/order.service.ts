@@ -136,9 +136,11 @@ const fetchSingleorder = async (req: Request, res: Response) => {
                   (acc, product) => acc + (product?.quantity || 0),
                   0
               ),
-              orderProducts: myOrder?.orderProducts?.map((product) => ({
-                  _id: product?._id,
+              products: myOrder?.orderProducts?.map((product) => ({
+                  orderProductId: product?._id,
                   productId: product?.productId,
+                  productName: product?.product?.name,
+                  productImage: product?.product?.images[0]?.image,
                   companyId: product?.companyId,
                   quantity: product?.quantity,
                   price: product?.price,
@@ -146,7 +148,7 @@ const fetchSingleorder = async (req: Request, res: Response) => {
                   paymentMethod: product?.PaymentMethod,
                   isOrderPlaced: product?.isOrderPlaced,
                   paymentTransaction: {
-                      _id: product?.paymentTransaction?._id,
+                      paymentId: product?.paymentTransaction?._id,
                       amount: product?.paymentTransaction?.amount,
                       paymentStatus: product?.paymentTransaction?.paymentStatus,
                   },

@@ -48,16 +48,76 @@ export class MongoOrderRepository implements IOrderRepository {
     }
     async singleOrder(
         payload: FilterQuery<IUserOrderDocument>
-    ): Promise<IUserOrderPopulatedDocument | null> {
-        return UserOrderModel.findOne({ ...payload })
-            .populate({
-                path: 'orderProducts',
-                populate: {
-                    path: 'paymentTransaction',
+    ): Promise<IUserOrderPopulatedDocument> {
+        const userOrder = await UserOrderModel.aggregate([
+            {
+                $match: {
+                    userId: new Types.ObjectId(payload?.userId),
                 },
-            })
-            .lean<IUserOrderPopulatedDocument>()
-            .exec();
+            },
+            {
+                $lookup: {
+                    from: 'orderproducts',
+                    localField: '_id',
+                    foreignField: 'orderId',
+                    as: 'orderProducts',
+                },
+            },
+            {
+                $unwind: '$orderProducts',
+            },
+            {
+                $lookup: {
+                    from: 'paymenttransactions',
+                    localField: 'orderProducts._id',
+                    foreignField: 'orderProductId',
+                    as: 'orderProducts.paymentTransaction',
+                },
+            },
+            {
+                $unwind: {
+                    path: '$orderProducts.paymentTransaction',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'orderProducts.productId',
+                    foreignField: '_id',
+                    as: 'orderProducts.product',
+                },
+            },
+            {
+                $unwind: {
+                    path: '$orderProducts.product',
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $lookup: {
+                    from: 'productimages',
+                    localField: 'orderProducts.product._id',
+                    foreignField: 'productId',
+                    as: 'orderProducts.product.images',
+                },
+            },
+            {
+                $group: {
+                    _id: '$_id',
+                    orderTime: { $first: '$orderTime' },
+                    orderTimeEpoch: { $first: '$orderTimeEpoch' },
+                    totalPrice: { $first: '$totalPrice' },
+                    trackingNumber: { $first: '$trackingNumber' },
+                    orderID: { $first: '$orderID' },
+                    userId: { $first: '$userId' },
+                    createdAt: { $first: '$createdAt' },
+                    updatedAt: { $first: '$updatedAt' },
+                    orderProducts: { $push: '$orderProducts' },
+                },
+            },
+        ]);
+        return userOrder[0];
     }
 
     async allOrdersForCompany(companyId: string): Promise<IUserOrderPopulatedDocument[]> {
@@ -136,7 +196,7 @@ export class MongoOrderRepository implements IOrderRepository {
     async singleOrderForCompany(
         orderId: string,
         companyId: string
-    ): Promise<IUserOrderPopulatedDocument[]> {
+    ): Promise<IUserOrderPopulatedDocument> {
         const userOrder = await UserOrderModel.aggregate([
             {
                 $match: {
@@ -211,6 +271,6 @@ export class MongoOrderRepository implements IOrderRepository {
             },
         ]);
 
-        return userOrder;
+        return userOrder[0];
     }
 }
