@@ -36,12 +36,11 @@ const login = async (req: Request, res: Response) => {
     if (!isPassword) {
         throw new BadRequestError('Invalid Credenitals');
     }
-
     const accessToken = TokenService.generateAccessToken({
         _id: user._id.toString(),
         role: user.role,
     });
-    return { accessToken };
+    return { accessToken, isProfileCompleted: user?.isProfileCompleted };
 };
 
 const createShop = async (req: Request) => {

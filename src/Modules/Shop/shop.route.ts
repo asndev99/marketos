@@ -40,4 +40,25 @@ shopRouter.get(
     shopController.discountedProducts
 );
 
+shopRouter.get(
+    '/all-companies',
+    verifyUser,
+    authorizeRole(UserRole.SHOPKEEPER),
+    shopController.allCompanies
+);
+
+shopRouter.get(
+    '/category-products',
+    verifyUser,
+    authorizeRole(UserRole.SHOPKEEPER),
+    shopController.categoryProducts
+);
+
+shopRouter.get(
+    '/company-products/:id',
+    verifyUser,
+    authorizeRole(UserRole.SHOPKEEPER),
+    shopController.companyProducts
+);
+
 export default shopRouter;

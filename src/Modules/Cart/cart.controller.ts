@@ -26,7 +26,7 @@ const getMyCart = async (req: Request, res: Response, next: NextFunction) => {
 const removeFromCart = async (req: Request, res: Response, next: NextFunction) => {
     try {
         await cartService.removeFromCart(req);
-        return successResponse(res, 200, 'Cart Items Fetched Successfully', null);
+        return successResponse(res, 200, 'Cart Removed From Cart Successfully', null);
     } catch (error) {
         console.log('Error in removing from cart');
         next(error);

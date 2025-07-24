@@ -43,7 +43,7 @@ const completeShopProfileDetails = async (req: Request) => {
     };
 };
 const getProfile = async (req: Request) => {
-    const data = await shopRepository.findOne({_id: req.user._id});
+    const data = await shopRepository.findOne({userId: req.user._id});
     if(!data) throw new NotFoundError("Shop Not Found");
 
     return data;

@@ -1,4 +1,4 @@
-import { FilterQuery, PopulateOptions } from 'mongoose';
+import { FilterQuery, PopulateOptions, ClientSession } from 'mongoose';
 import { CartModel, ICartDocument } from '../cart.model';
 import { ICartRepository } from './interface';
 
@@ -117,5 +117,18 @@ export class MongoCartRepository implements ICartRepository {
         } else {
             return this.findOneAndUpdate({ _id: existingItem._id }, { qty: newQty });
         }
+    }
+
+    async RemoveProductFromCart(options: {
+        productId: string;
+        userId: string;
+    }): Promise<ICartDocument | null> {
+        const existingItem = await this.findOne({
+            productId: options.productId,
+            userId: options.userId,
+        });
+
+        if (!existingItem) return null;
+        else return this.findOneAndDelete({ _id: existingItem._id });
     }
 }

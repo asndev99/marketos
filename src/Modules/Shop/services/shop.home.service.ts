@@ -40,8 +40,54 @@ const getDiscountedProducts = async (req: Request) => {
     };
 };
 
+const getAllCompanies = async (req: Request) => {
+    return companyRepository.findMany({
+        page: req.query.page ? parseInt(req.query.page as string, 10) : undefined,
+        limit: req.query.limit ? parseInt(req.query.limit as string, 10) : undefined,
+        sortBy: 'popularityRate',
+        sortOrder: 'desc',
+    });
+};
+
+const getCategoryProducts = async (req: Request) => {
+    const { data, meta } = await productRepository.FindMany({
+        filter: {
+            category: req?.query?.category,
+            isDeleted: false,
+        },
+        page: req.query.page ? parseInt(req.query.page as string, 10) : undefined,
+        limit: req.query.limit ? parseInt(req.query.limit as string, 10) : undefined,
+        sortOrder: 'desc',
+    });
+    const result = discountedProductsDto(data);
+    return {
+        data: result,
+        meta,
+    };
+};
+
+const getCompanyProducts = async (req: Request) => {
+    const { data, meta } = await productRepository.FindMany({
+        filter: {
+            companyId: (req?.params?.id).toString(),
+            isDeleted: false,
+        },
+        page: req.query.page ? parseInt(req.query.page as string, 10) : undefined,
+        limit: req.query.limit ? parseInt(req.query.limit as string, 10) : undefined,
+        sortOrder: 'desc',
+    });
+    const result = discountedProductsDto(data);
+    return {
+        data: result,
+        meta,
+    };
+};
+
 export default {
     getCategories,
     getPopularCompanies,
     getDiscountedProducts,
+    getAllCompanies,
+    getCategoryProducts,
+    getCompanyProducts
 };

@@ -5,9 +5,11 @@ import { MongoProductRepository } from '../Product/repository/product.repository
 import { MongoOrderRepository } from './repository/order.repository';
 import { generateOrderID, generateTrackingNumber } from '../../Utils/helpers';
 import { PaymentStatus, PaymentMethod, OrderStatus } from '../../Common/constants';
+import { MongoCartRepository } from '../Cart/repository/cart.repository';
 
 const productRepository = new MongoProductRepository();
 const orderRepository = new MongoOrderRepository();
+const cartRepository = new MongoCartRepository();
 
 interface productValidation {
     companyId: Types.ObjectId;
@@ -74,7 +76,11 @@ const orderPlacement = async (req: Request, res: Response, session: ClientSessio
         },
         session
     );
-    const allProducts = orderDetails.map((product: productValidation) => {
+    const allProducts = await Promise.all(orderDetails.map( async (product: productValidation) => {
+        await cartRepository.RemoveProductFromCart({
+            productId: (product?.productId).toString(),
+            userId: userId.toString(),
+        });
         return {
             orderId: newOrder?._id,
             productId: product?.productId,
@@ -84,7 +90,7 @@ const orderPlacement = async (req: Request, res: Response, session: ClientSessio
             orderTimeUnitProductPrice: product?.orderTimePrice,
             PaymentMethod: product?.paymentMethod,
         };
-    });
+    }))
     const data = await orderRepository.createOrderProduct(allProducts, session);
     const paymentData = data.map((productData) => {
         return {
@@ -95,6 +101,11 @@ const orderPlacement = async (req: Request, res: Response, session: ClientSessio
         };
     });
     await orderRepository.createPaymentTransaction(paymentData, session);
+    // await Promise.all(
+    //     orderDetails.map( async (product: productValidation) => {
+    //         await cartRepository.RemoveProductFromCart({productId: (product?.productId).toString(), userId: userId.toString() })
+    //     })
+    // )
     return true;
 };
 

@@ -51,10 +51,43 @@ export const discountedProducts = async (req: Request, res: Response, next: Next
     }
 };
 
+export const categoryProducts = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const data = await shopHomeService.getCategoryProducts(req);
+        return successResponse(res, 200, 'Category Products Fetched Successfully', data);
+    } catch (error) {
+        console.log('Error in getting discounted Products');
+        next(error);
+    }
+};
+
+export const allCompanies = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const data = await shopHomeService.getAllCompanies(req);
+        return successResponse(res, 200, 'All Companies Fetched Successully', data);
+    } catch (error) {
+        console.log('Error in getting popular companies');
+        next(error);
+    }
+};
+
+export const companyProducts = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const data = await shopHomeService.getCompanyProducts(req);
+        return successResponse(res, 200, 'Company Products Fetched Successfully', data);
+    } catch (error) {
+        console.log('Error in getting discounted Products');
+        next(error);
+    }
+};
+
 export default {
     createProfile,
     getProfile,
     getTopCategories,
     popularCompanies,
     discountedProducts,
+    allCompanies,
+    categoryProducts,
+    companyProducts
 };
