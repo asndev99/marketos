@@ -16,6 +16,7 @@ import {
 } from '../order.model';
 import { FindManyOptions, IOrderRepository } from './order.repository.interface';
 import { FilterQuery, Types, ClientSession } from 'mongoose';
+import { orderUpdateValidation } from '../../Company/interface';
 
 export class MongoOrderRepository implements IOrderRepository {
     async createOrder(data: IUserOrder, session: ClientSession): Promise<IUserOrderDocument> {
@@ -272,5 +273,34 @@ export class MongoOrderRepository implements IOrderRepository {
         ]);
 
         return userOrder[0];
+    }
+
+    async orderUpdateForCompany(payload: orderUpdateValidation[]): Promise<Boolean> {
+        const operations = payload.map((item: orderUpdateValidation) => ({
+            updateOne: {
+                filter: { _id: item?.orderId },
+                update: {
+                    $set: {
+                        orderStatus: item?.status,
+                        deliveredQuantity: item?.quantity,
+                        finalPrice: item?.price,
+                        isOrderPlaced: true,
+                    },
+                },
+            },
+        }));
+        const operationsPayment = payload.map((item: orderUpdateValidation) => ({
+            updateOne: {
+                filter: { orderProductId: item?.orderId },
+                update: {
+                    $set: {
+                        amount: item?.price
+                    },
+                },
+            },
+        }));
+        await OrderProductModel.bulkWrite(operations);
+        await PaymentTransactionModel.bulkWrite(operationsPayment);
+        return true;
     }
 }

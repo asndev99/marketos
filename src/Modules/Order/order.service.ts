@@ -76,21 +76,25 @@ const orderPlacement = async (req: Request, res: Response, session: ClientSessio
         },
         session
     );
-    const allProducts = await Promise.all(orderDetails.map( async (product: productValidation) => {
-        await cartRepository.RemoveProductFromCart({
-            productId: (product?.productId).toString(),
-            userId: userId.toString(),
-        });
-        return {
-            orderId: newOrder?._id,
-            productId: product?.productId,
-            companyId: product?.companyId,
-            quantity: product?.quantity,
-            price: product?.totalPrice,
-            orderTimeUnitProductPrice: product?.orderTimePrice,
-            PaymentMethod: product?.paymentMethod,
-        };
-    }))
+    const allProducts = await Promise.all(
+        orderDetails.map(async (product: productValidation) => {
+            await cartRepository.RemoveProductFromCart({
+                productId: (product?.productId).toString(),
+                userId: userId.toString(),
+            });
+            return {
+                orderId: newOrder?._id,
+                productId: product?.productId,
+                companyId: product?.companyId,
+                quantity: product?.quantity,
+                price: product?.totalPrice,
+                deliveredQuantity: product?.quantity,
+                finalPrice: product?.totalPrice,
+                orderTimeUnitProductPrice: product?.orderTimePrice,
+                PaymentMethod: product?.paymentMethod,
+            };
+        })
+    );
     const data = await orderRepository.createOrderProduct(allProducts, session);
     const paymentData = data.map((productData) => {
         return {
@@ -113,14 +117,17 @@ const allOrders = async (req: Request, res: Response) => {
     const myOrders = await orderRepository.allOrders({ userId: req?.user?._id });
     return myOrders.map((order) => {
         let totalItems: number = 0;
+        let totalPrice: number = 0;
         order?.orderProducts?.map((product) => {
-            totalItems = totalItems + product?.quantity!;
+            totalItems = totalItems + product?.deliveredQuantity!;
+            totalPrice = totalPrice + product?.finalPrice;
         });
         return {
             _id: order?._id,
             orderTime: order?.orderTime,
             orderTimeEpoch: order?.orderTimeEpoch,
-            totalPrice: order?.totalPrice,
+            // totalPrice: order?.totalPrice,
+            totalPrice: totalPrice,
             trackingNumber: order?.trackingNumber,
             orderID: order?.orderID,
             userId: order?.userId,
@@ -139,12 +146,16 @@ const fetchSingleorder = async (req: Request, res: Response) => {
               _id: myOrder?._id,
               orderTime: myOrder?.orderTime,
               orderTimeEpoch: myOrder?.orderTimeEpoch,
-              totalPrice: myOrder?.totalPrice,
+            //   totalPrice: myOrder?.totalPrice,
+              totalPrice: myOrder?.orderProducts?.reduce(
+                  (acc, product) => acc + (product?.finalPrice || 0),
+                  0
+              ),
               trackingNumber: myOrder?.trackingNumber,
               orderID: myOrder?.orderID,
               userId: myOrder?.userId,
               noOfItems: myOrder?.orderProducts?.reduce(
-                  (acc, product) => acc + (product?.quantity || 0),
+                  (acc, product) => acc + (product?.deliveredQuantity || 0),
                   0
               ),
               products: myOrder?.orderProducts?.map((product) => ({
@@ -155,6 +166,8 @@ const fetchSingleorder = async (req: Request, res: Response) => {
                   companyId: product?.companyId,
                   quantity: product?.quantity,
                   price: product?.price,
+                  deliveredQuantity: product?.deliveredQuantity,
+                  finalPrice: product?.finalPrice,
                   orderTimeUnitProductPrice: product?.orderTimeUnitProductPrice,
                   paymentMethod: product?.PaymentMethod,
                   isOrderPlaced: product?.isOrderPlaced,

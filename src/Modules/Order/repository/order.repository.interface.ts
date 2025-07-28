@@ -2,6 +2,7 @@ import { paginationMeta } from '../../../Common/Interface';
 import { IUserOrder, IOrderProduct, IPaymentTransaction, IUserOrderPopulatedDocument, IOrderProductPopulatedDocument } from '../interface';
 import { IUserOrderDocument, IOrderProductDocument, IPaymentTransactionDocument } from '../order.model';
 import { FilterQuery, Types, ClientSession } from 'mongoose';
+import {orderUpdateValidation} from '../../Company/interface';
 
 export interface FindManyOptions {
     // filter?: FilterQuery<IProductDocument>;
@@ -19,4 +20,5 @@ export interface IOrderRepository{
     singleOrder(payload: FilterQuery<IUserOrderDocument>): Promise<IUserOrderPopulatedDocument>;
     allOrdersForCompany(payload: string): Promise<IUserOrderPopulatedDocument[]>;
     singleOrderForCompany(orderId: string, companyId: string): Promise<IUserOrderPopulatedDocument>;
+    orderUpdateForCompany(payload: orderUpdateValidation[]): Promise<Boolean>
 }
