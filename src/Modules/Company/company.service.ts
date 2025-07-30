@@ -5,11 +5,14 @@ import { MongoUserRepository } from '../User/repository/user.repository';
 import { uploadBufferToCloudinary } from '../../Utils/helpers';
 import { MongoOrderRepository } from '../Order/repository/order.repository';
 import { ShopRepository } from '../Shop/repository/shop.repository';
+import {orderUpdateValidation} from './interface'
+import { Types } from 'mongoose';
 
 const companyRepository = new MongoCompanyRepository();
 const userRepository = new MongoUserRepository();
 const orderRepository = new MongoOrderRepository();
 const shopRepository = new ShopRepository();
+
 
 const createCompanyDetails = async (req: Request, res: Response) => {
     let { numOfDistribution, companyName } = req.body;
@@ -76,8 +79,10 @@ const allOrders = async (req: Request, res: Response) => {
         orders.map(async (order) => {
             const userId = order?.userId.toString();
             let total = 0;
+            let finalTotal = 0;
             let products = order?.orderProducts.map((orderproduct) => {
                 total = total + orderproduct?.price;
+                finalTotal = finalTotal + orderproduct?.finalPrice;
                 return {
                     orderProductId: orderproduct?._id,
                     productId: orderproduct?.productId,
@@ -85,6 +90,8 @@ const allOrders = async (req: Request, res: Response) => {
                     productImage: orderproduct?.product?.images[0]?.image,
                     quantity: orderproduct?.quantity,
                     price: orderproduct?.price,
+                    deliveredQuantity: orderproduct?.deliveredQuantity,
+                    finalPrice: orderproduct?.finalPrice,
                     orderTimeUnitProductPrice: orderproduct?.orderTimeUnitProductPrice,
                     isOrderPlaced: orderproduct?.isOrderPlaced,
                     orderStatus: orderproduct?.orderStatus,
@@ -103,7 +110,8 @@ const allOrders = async (req: Request, res: Response) => {
                 orderID: order?.orderID,
                 orderTime: order?.orderTime,
                 orderTimeEpoch: order?.orderTimeEpoch,
-                totalAmount: total,
+                actutalTotalAmount: total,
+                finalTotalAmount: finalTotal,
                 shopkeeprDetails: userCache.get(userId),
                 products,
             });
@@ -123,8 +131,10 @@ const singleOrder = async (req: Request, res: Response) => {
     const user = await userRepository.findById(userId);
     const shopkeeper = await shopRepository.findOne({ userId });
     let total = 0;
+    let finalTotal = 0;
     let products = order?.orderProducts.map((orderproduct) => {
         total = total + orderproduct?.price;
+        finalTotal = finalTotal + orderproduct?.finalPrice;
         return {
             orderProductId: orderproduct?._id,
             productId: orderproduct?.productId,
@@ -132,6 +142,8 @@ const singleOrder = async (req: Request, res: Response) => {
             productImage: orderproduct?.product?.images[0]?.image,
             quantity: orderproduct?.quantity,
             price: orderproduct?.price,
+            deliveredQuantity: orderproduct?.deliveredQuantity,
+            finalPrice: orderproduct?.finalPrice,
             orderTimeUnitProductPrice: orderproduct?.orderTimeUnitProductPrice,
             isOrderPlaced: orderproduct?.isOrderPlaced,
             orderStatus: orderproduct?.orderStatus,
@@ -150,7 +162,8 @@ const singleOrder = async (req: Request, res: Response) => {
         orderID: order?.orderID,
         orderTime: order?.orderTime,
         orderTimeEpoch: order?.orderTimeEpoch,
-        totalAmount: total,
+        actutalTotalAmount: total,
+        finalTotalAmount: finalTotal,
         shopkeeperDetails: {
             ownerName: shopkeeper?.ownerName,
             shopName: shopkeeper?.shopName,
@@ -164,9 +177,18 @@ const singleOrder = async (req: Request, res: Response) => {
     };
 };
 
+const updateOrder = async (req: Request, res: Response) => {
+    const company = await companyRepository.findOne({ userId: req.user._id });
+    const companyId: string = company?.id.toString();
+    const { orderUpdate } = req?.body;
+    await orderRepository.orderUpdateForCompany(orderUpdate);
+    return true;
+};
+
 export default {
     createCompanyDetails,
     getCompanyDetails,
     allOrders,
-    singleOrder
+    singleOrder,
+    updateOrder
 };

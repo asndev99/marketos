@@ -9,7 +9,7 @@ export enum UserRole {
 export enum PaymentStatus {
     PENDING = 'PENDING',
     COMPLETED = 'COMPLETED',
-    Received = 'Received'
+    RECEIVED = 'RECEIVED'
 }
 
 export enum PaymentMethod {
@@ -17,9 +17,10 @@ export enum PaymentMethod {
     CREDIT = 'CREDIT'
 }
 export enum OrderStatus {
-    NEW = 'NEW',
+    NEW = 'PENDING',
     DELIVERED = 'DELIVERED',
     CANCELLED = 'CANCELLED',
+    RECEIVED = 'RECEIVED'
 }
 
 export interface JwtVerifiedPayload {

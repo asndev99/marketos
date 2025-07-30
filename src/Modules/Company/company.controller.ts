@@ -17,7 +17,7 @@ const createProfile = async (req: MulterRequest, res: Response, next: NextFuncti
   }
 };
 
-const getProfile = async (req: MulterRequest, res: Response, next: NextFunction) => {
+const getProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = await companyService.getCompanyDetails(req, res);
     return successResponse(res, 200, "Get Company Profile Successfully", data);
@@ -27,7 +27,7 @@ const getProfile = async (req: MulterRequest, res: Response, next: NextFunction)
   }
 };
 
-const getOrders = async (req: MulterRequest, res: Response, next: NextFunction) => {
+const getOrders = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = await companyService.allOrders(req, res);
     return successResponse(res, 200, "Get All company orders Successfully", data);
@@ -37,10 +37,20 @@ const getOrders = async (req: MulterRequest, res: Response, next: NextFunction) 
   }
 };
 
-const getOrder = async (req: MulterRequest, res: Response, next: NextFunction) => {
+const getOrder = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = await companyService.singleOrder(req, res);
     return successResponse(res, 200, "Get order details Successfully", data);
+  } catch (error) {
+    console.log("Error in fetching all orders", error);
+    next(error);
+  }
+};
+
+const updateOrder = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await companyService.updateOrder(req, res);
+    return successResponse(res, 200, "Update order status Successfully", data);
   } catch (error) {
     console.log("Error in fetching all orders", error);
     next(error);
@@ -51,5 +61,6 @@ export default {
   createProfile,
   getProfile,
   getOrders,
-  getOrder
+  getOrder,
+  updateOrder
 };

@@ -19,4 +19,5 @@ companyRouter.post(
 companyRouter.get('/', verifyUser, authorizeRole(UserRole.COMPANY), companyController.getProfile);
 companyRouter.get('/order', verifyUser, authorizeRole(UserRole.COMPANY), companyController.getOrders);
 companyRouter.get('/order/:id', verifyUser, authorizeRole(UserRole.COMPANY), companyController.getOrder);
+companyRouter.patch('/update-order/', verifyUser, authorizeRole(UserRole.COMPANY), companyController.updateOrder);
 export default companyRouter;
