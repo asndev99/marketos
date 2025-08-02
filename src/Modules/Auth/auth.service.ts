@@ -45,9 +45,9 @@ const login = async (req: Request, res: Response) => {
 
 const createShop = async (req: Request) => {
     const { username, password, role } = req.body;
-    const existingShop = await userRepository.findByUsername(username);
-    if (!existingShop) {
-        throw new BadRequestError('Shop with this username already exists');
+    const existingUsername = await userRepository.findByUsername(username);
+    if (existingUsername) {
+        throw new BadRequestError('This username is already in use');
     }
     const hashPassword = bcrypt.hashSync(password, 10);
     const shopKeeper = await userRepository.create({ username, password: hashPassword, role });

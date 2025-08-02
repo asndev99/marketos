@@ -8,10 +8,11 @@ import { UserRole } from '../../Common/constants';
 const shopRouter = express.Router();
 
 shopRouter.post(
-    '/profile',
+    '/complete-profile',
     validateSchema(createShopProfileSchema),
-    shopController.createProfile
+    shopController.completeShopDetails
 );
+
 shopRouter.get(
     '/profile',
     verifyUser,

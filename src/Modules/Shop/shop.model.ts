@@ -35,19 +35,27 @@ const shopSchema: Schema<IShopDocument> = new Schema({
         type: String,
         required: false,
     },
-    longitude: {
-        type: Number,
-        required: true,
-    },
-    latitude: {
-        type: Number,
-        required: true,
+    location: {
+        type: {
+            type: String,
+            enum: ['Point'],
+            required: true,
+        },
+        coordinates: {
+            type: [Number],
+            required: true,
+        },
     },
     NIC: {
         type: String,
         required: true,
         unique: true,
     },
+    ntn: {
+        type: String,
+        required: false,
+        default:null
+    },
 });
-
+shopSchema.index({ location: '2dsphere' });
 export const ShopModel = mongoose.model<IShopDocument>('Shop', shopSchema);
