@@ -60,14 +60,15 @@ const allOrders = async (req: Request, res: Response) => {
             const shopkeeper = await shopRepository.findOne({ userId });
 
             if (user && shopkeeper) {
+                const [longitude, latitude] = shopkeeper.location.coordinates;
                 userCache.set(userId, {
                     ownerName: shopkeeper.ownerName,
                     shopName: shopkeeper.shopName,
                     mobileNumber: shopkeeper.mobileNumber,
                     shopAddress: shopkeeper.shopAddress,
                     landmark: shopkeeper.landMark,
-                    latitude: shopkeeper.latitude,
-                    longitude: shopkeeper.longitude,
+                    latitude: latitude,
+                    longitude: longitude,
                 });
             }
         })
@@ -155,6 +156,7 @@ const singleOrder = async (req: Request, res: Response) => {
         };
     });
 
+    // const [longitude, latitude] = shopkeeper?.location.coordinates;
     return {
         _id: order?._id,
         trackingNumber: order?.trackingNumber,
@@ -169,8 +171,8 @@ const singleOrder = async (req: Request, res: Response) => {
             mobileNumber: shopkeeper?.mobileNumber,
             shopAddress: shopkeeper?.shopAddress,
             landmark: shopkeeper?.landMark,
-            latitude: shopkeeper?.latitude,
-            longitude: shopkeeper?.longitude,
+            latitude: shopkeeper?.location.coordinates[1] ?? null,
+            longitude: shopkeeper?.location.coordinates[0] ?? null,
         },
         products,
     };

@@ -2,53 +2,53 @@ import { Request } from 'express';
 import { ShopRepository } from '../repository/shop.repository';
 import { BadRequestError, NotFoundError } from '../../../Utils/Error';
 import { MongoUserRepository } from '../../User/repository/user.repository';
-import bcrypt from 'bcrypt';
-import { UserRole } from '../../../Common/constants';
-import TokenService from '../../Auth/token.service';
+import { CreateShopPayload } from '../interface';
 
 const shopRepository = new ShopRepository();
 const userRepository = new MongoUserRepository();
-const completeShopProfileDetails = async (req: Request) => {
-    const { username, password, ...restPayload } = req.body;
-    const existingShop = await shopRepository.findOne({
-        $or: [{ mobileNumber: restPayload.mobileNumber }, { NIC: restPayload.NIC }],
-    });
 
-    if (existingShop) {
-        throw new BadRequestError('Mobile Number or CNIC is already in use');
+const completeShopDetails = async (req: Request) => {
+    if (req.user.isProfileCompleted) {
+        throw new BadRequestError("Your Shop Details Are Completed");
     }
 
-    const hashPassword = await bcrypt.hash(password, 10);
-    const user = await userRepository.create({
-        username,
-        password: hashPassword,
-        role: UserRole.SHOPKEEPER,
+    const createShopPayload = req.body as CreateShopPayload;
+
+    const isPhoneNicExists = await shopRepository.findOne({
+        $or: [{ mobileNumber: createShopPayload.mobileNumber }, { NIC: createShopPayload.NIC }],
     });
 
-    const shopDetailsPayload = {
-        ...restPayload,
-        userId: user._id,
-    };
+    if (isPhoneNicExists) {
+        throw new BadRequestError('Shop with this phone or CNIC already exists');
+    }
 
-    await shopRepository.createProfile(shopDetailsPayload);
-    await userRepository.findByIdAndUpdate(user._id.toString(), { isProfileCompleted: true });
+    const latitude = parseFloat(createShopPayload.latitude.toString());
+    const longitude = parseFloat(createShopPayload.longitude.toString());
 
-    const accessToken = TokenService.generateAccessToken({
-        _id: user._id.toString(),
-        role: user.role,
-    });
 
-    return {
-        accessToken,
-    };
-};
+    await shopRepository.createProfile({
+        ...createShopPayload,
+        ntn: createShopPayload.ntn ?? undefined,
+        userId: req.user?._id,
+        location: {
+            type: 'Point',
+            coordinates: [longitude, latitude],
+        },
+    }),
+
+        await userRepository.findByIdAndUpdate(req.user._id.toString(), { isProfileCompleted: true })
+    return;
+
+}
+
 const getProfile = async (req: Request) => {
-    const data = await shopRepository.findOne({userId: req.user._id});
-    if(!data) throw new NotFoundError("Shop Not Found");
+    const data = await shopRepository.findOne({ userId: req.user._id });
+    if (!data) throw new NotFoundError('Shop Not Found');
 
     return data;
-}
+};
+
 export default {
-    completeShopProfileDetails,
-    getProfile
+    getProfile,
+    completeShopDetails,
 };

@@ -4,6 +4,7 @@ import { createAdminSchema } from './validation/createAdminSchema';
 import authController from './auth.controller';
 import { createCompanySchema } from './validation/createCompanySchema';
 import { login, validateUserNameSchema } from './validation/common';
+import { createShopSchema } from './validation/createShopSchema';
 
 const authRouter = Router();
 
@@ -18,6 +19,8 @@ authRouter.post(
     validateSchema(createCompanySchema),
     authController.createCompany
 );
+
+authRouter.post('/create-shop', validateSchema(createShopSchema), authController.createShop);
 
 //GENERALIZED ROUTES
 authRouter.post('/login', validateSchema(login), authController.login);

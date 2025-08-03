@@ -3,15 +3,16 @@ import shopHomeService from './services/shop.home.service';
 import shopProfileService from './services/shop.profile.service';
 import { successResponse } from '../../Utils/Response';
 
-export const createProfile = async (req: Request, res: Response, next: NextFunction) => {
+export const completeShopDetails = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const data = await shopProfileService.completeShopProfileDetails(req);
-        return successResponse(res, 200, 'Shop Profile Completed Successfully', data);
+        await shopProfileService.completeShopDetails(req);
+        return successResponse(res, 200, 'Shop Details Completed Successfully', null);
     } catch (error) {
-        console.log('Error in completing shop details', error);
+        console.log('Error in creating shop', error);
         next(error);
     }
 };
+
 export const getProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const data = await shopProfileService.getProfile(req);
@@ -21,6 +22,7 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
         next(error);
     }
 };
+
 export const getTopCategories = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const data = await shopHomeService.getCategories(req);
@@ -82,12 +84,12 @@ export const companyProducts = async (req: Request, res: Response, next: NextFun
 };
 
 export default {
-    createProfile,
+    completeShopDetails,
     getProfile,
     getTopCategories,
     popularCompanies,
     discountedProducts,
     allCompanies,
     categoryProducts,
-    companyProducts
+    companyProducts,
 };

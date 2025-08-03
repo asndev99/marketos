@@ -4,8 +4,6 @@ import { mobileNumberSchema, nicSchema } from './common';
 
 export const createShopProfileSchema = z
     .object({
-        username: baseStringSchema,
-        password: passwordSchema,
         ownerName: baseStringSchema,
         shopName: baseStringSchema,
         mobileNumber: mobileNumberSchema,
@@ -14,5 +12,6 @@ export const createShopProfileSchema = z
         longitude: z.coerce.number(),
         latitude: z.coerce.number(),
         NIC: nicSchema,
+        ntn: baseStringSchema.nullable().optional()
     })
     .strict();
