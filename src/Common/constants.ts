@@ -18,9 +18,11 @@ export enum PaymentMethod {
 }
 export enum OrderStatus {
     NEW = 'PENDING',
+    ACCEPTED = 'ACCEPTED',
     DELIVERED = 'DELIVERED',
-    CANCELLED = 'CANCELLED',
-    RECEIVED = 'RECEIVED'
+    USER_CANCELLED = 'USER_CANCELLED',
+    RECEIVED = 'RECEIVED',
+    COMPANY_CANCELLED = 'COMPANY_CANCELLED'
 }
 
 export interface JwtVerifiedPayload {

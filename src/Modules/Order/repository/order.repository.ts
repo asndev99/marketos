@@ -294,7 +294,7 @@ export class MongoOrderRepository implements IOrderRepository {
                 filter: { orderProductId: item?.orderId },
                 update: {
                     $set: {
-                        amount: item?.price
+                        amount: item?.price,
                     },
                 },
             },
@@ -302,5 +302,14 @@ export class MongoOrderRepository implements IOrderRepository {
         await OrderProductModel.bulkWrite(operations);
         await PaymentTransactionModel.bulkWrite(operationsPayment);
         return true;
+    }
+
+    async companyAnalyticsOrders(companyId: string): Promise<IOrderProductDocument[]> {
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+        return OrderProductModel.find({
+            companyId: companyId,
+            createdAt: { $gte: sevenDaysAgo },
+        });
     }
 }
