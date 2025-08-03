@@ -5,14 +5,15 @@ import { MongoUserRepository } from '../User/repository/user.repository';
 import { uploadBufferToCloudinary } from '../../Utils/helpers';
 import { MongoOrderRepository } from '../Order/repository/order.repository';
 import { ShopRepository } from '../Shop/repository/shop.repository';
-import {orderUpdateValidation} from './interface'
-import { Types } from 'mongoose';
+// import { orderUpdateValidation } from './interface';
+// import { Types } from 'mongoose';
+import { getDayName } from '../../Utils/helpers';
+import { IOrderProductDocument } from '../Order/order.model';
 
 const companyRepository = new MongoCompanyRepository();
 const userRepository = new MongoUserRepository();
 const orderRepository = new MongoOrderRepository();
 const shopRepository = new ShopRepository();
-
 
 const createCompanyDetails = async (req: Request, res: Response) => {
     let { numOfDistribution, companyName } = req.body;
@@ -117,7 +118,7 @@ const allOrders = async (req: Request, res: Response) => {
             });
         })
     );
-    return result;
+    return { data: result.reverse() };
 };
 
 const singleOrder = async (req: Request, res: Response) => {
@@ -185,10 +186,166 @@ const updateOrder = async (req: Request, res: Response) => {
     return true;
 };
 
+const OrderAnalytics = async (req: Request, res: Response) => {
+    const company = await companyRepository.findOne({ userId: req.user._id });
+    const companyId: string = company?.id.toString();
+
+    const orders = await orderRepository.companyAnalyticsOrders(companyId);
+    const deliveredOrders = orders.filter((order) => order.orderStatus === 'DELIVERED');
+    const companyCancelled = orders.filter((order) => order.orderStatus === 'COMPANY_CANCELLED');
+    const pending = orders.filter((order) => order.orderStatus === 'PENDING');
+
+    const weeklyDeliveredOrders = orderByWeek(deliveredOrders);
+    const weeklyCompanyCancelled = orderByWeek(companyCancelled);
+    const weeklyPending = orderByWeek(pending);
+
+    return {
+        weeklyDeliveredOrders: weeklyDeliveredOrders,
+        weeklyCompanyCancelled: weeklyCompanyCancelled,
+        weeklyPending: weeklyPending
+    }
+};
+
+const IncomeAnalytics = async (req: Request, res: Response) => {
+    const company = await companyRepository.findOne({ userId: req.user._id });
+    const companyId: string = company?.id.toString();
+
+    const orders = await orderRepository.companyAnalyticsOrders(companyId);
+    const deliveredOrders = orders.filter((order) => order.orderStatus === 'DELIVERED');
+
+    const weeklyDeliveredOrders = incomeByWeek(deliveredOrders);
+
+    return {
+        weeklyIncome: weeklyDeliveredOrders
+    }
+};
+
+function orderByWeek(orderdata: IOrderProductDocument[]) {
+    try {
+        const end = new Date();
+        end.setUTCHours(0, 0, 0, 0);
+        const start = new Date(end);
+        start.setDate(start.getDate() - 6);
+
+        const gte = start;
+        const lte = end;
+
+        // Group booking data by week
+        const weeklyOrder = orderdata?.reduce((acc: any, data: IOrderProductDocument) => {
+            const day = data?.createdAt.getUTCDate();
+            const month = data?.createdAt.getUTCMonth() + 1;
+            const year = data?.createdAt.getUTCFullYear();
+            const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day
+                .toString()
+                .padStart(2, '0')}`;
+
+            const dayName = getDayName(formattedDate);
+
+            if (!acc[formattedDate]) {
+                acc[formattedDate] = {
+                    day: dayName,
+                    count: 0,
+                };
+            }
+            acc[formattedDate].count += 1;
+            return acc;
+        }, {});
+
+        // Populate missing days in the current week
+        let from = new Date(gte);
+        const missingDates: any = {};
+
+        while (from <= lte) {
+            const dateStr = from.toISOString().split('T')[0];
+            if (!weeklyOrder[dateStr]) {
+                const dayName = getDayName(dateStr);
+                missingDates[dateStr] = { day: dayName, count: 0 };
+            }
+            from.setDate(from.getDate() + 1);
+        }
+
+        // Merge weekly bookings and missing dates
+        const processedData = { ...weeklyOrder, ...missingDates };
+
+        const sortedData = Object.keys(processedData)
+            .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
+            .map((key) => ({
+                x: processedData[key].day,
+                y: Number(processedData[key].count),
+            }));
+
+        return { data: sortedData };
+    } catch (error) {
+        return [];
+    }
+}
+
+function incomeByWeek(orderdata: IOrderProductDocument[]) {
+    try {
+        const end = new Date();
+        end.setUTCHours(0, 0, 0, 0);
+        const start = new Date(end);
+        start.setDate(start.getDate() - 6);
+
+        const gte = start;
+        const lte = end;
+
+        // Group booking data by week
+        const weeklyOrder = orderdata?.reduce((acc: any, data: IOrderProductDocument) => {
+            const day = data?.createdAt.getUTCDate();
+            const month = data?.createdAt.getUTCMonth() + 1;
+            const year = data?.createdAt.getUTCFullYear();
+            const formattedDate = `${year}-${month.toString().padStart(2, '0')}-${day
+                .toString()
+                .padStart(2, '0')}`;
+
+            const dayName = getDayName(formattedDate);
+
+            if (!acc[formattedDate]) {
+                acc[formattedDate] = {
+                    day: dayName,
+                    income: 0,
+                };
+            }
+            acc[formattedDate].income += data?.finalPrice;
+            return acc;
+        }, {});
+
+        // Populate missing days in the current week
+        let from = new Date(gte);
+        const missingDates: any = {};
+
+        while (from <= lte) {
+            const dateStr = from.toISOString().split('T')[0];
+            if (!weeklyOrder[dateStr]) {
+                const dayName = getDayName(dateStr);
+                missingDates[dateStr] = { day: dayName, income: 0 };
+            }
+            from.setDate(from.getDate() + 1);
+        }
+
+        // Merge weekly bookings and missing dates
+        const processedData = { ...weeklyOrder, ...missingDates };
+
+        const sortedData = Object.keys(processedData)
+            .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
+            .map((key) => ({
+                x: processedData[key].day,
+                y: Number(processedData[key].income),
+            }));
+
+        return { data: sortedData };
+    } catch (error) {
+        return [];
+    }
+}
+
 export default {
     createCompanyDetails,
     getCompanyDetails,
     allOrders,
     singleOrder,
-    updateOrder
+    updateOrder,
+    OrderAnalytics,
+    IncomeAnalytics
 };

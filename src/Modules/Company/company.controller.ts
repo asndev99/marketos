@@ -30,7 +30,7 @@ const getProfile = async (req: Request, res: Response, next: NextFunction) => {
 const getOrders = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = await companyService.allOrders(req, res);
-    return successResponse(res, 200, "Get All company orders Successfully", data);
+    return successResponse(res, 200, "Get All company orders Successfully", data?.data);
   } catch (error) {
     console.log("Error in fetching all orders", error);
     next(error);
@@ -57,10 +57,32 @@ const updateOrder = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const orderAnalytics = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await companyService.OrderAnalytics(req, res);
+    return successResponse(res, 200, "Get order analytics Successfully", data);
+  } catch (error) {
+    console.log("Error in fetching all orders", error);
+    next(error);
+  }
+};
+
+const incomeAnalytics = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await companyService.IncomeAnalytics(req, res);
+    return successResponse(res, 200, "Get income analytics Successfully", data);
+  } catch (error) {
+    console.log("Error in fetching all orders", error);
+    next(error);
+  }
+};
+
 export default {
   createProfile,
   getProfile,
   getOrders,
   getOrder,
-  updateOrder
+  updateOrder,
+  orderAnalytics,
+  incomeAnalytics
 };

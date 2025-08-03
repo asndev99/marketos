@@ -1,6 +1,6 @@
 import { paginationMeta } from '../../../Common/Interface';
 import { IUserOrder, IOrderProduct, IPaymentTransaction, IUserOrderPopulatedDocument, IOrderProductPopulatedDocument } from '../interface';
-import { IUserOrderDocument, IOrderProductDocument, IPaymentTransactionDocument } from '../order.model';
+import { IUserOrderDocument, IOrderProductDocument, IPaymentTransactionDocument, OrderProductModel } from '../order.model';
 import { FilterQuery, Types, ClientSession } from 'mongoose';
 import {orderUpdateValidation} from '../../Company/interface';
 
@@ -21,4 +21,5 @@ export interface IOrderRepository{
     allOrdersForCompany(payload: string): Promise<IUserOrderPopulatedDocument[]>;
     singleOrderForCompany(orderId: string, companyId: string): Promise<IUserOrderPopulatedDocument>;
     orderUpdateForCompany(payload: orderUpdateValidation[]): Promise<Boolean>
+    companyAnalyticsOrders(payload: string): Promise<IOrderProductDocument[]>;
 }

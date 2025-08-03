@@ -27,6 +27,9 @@ const UserOrderSchema: Schema<IUserOrderDocument> = new Schema(
 
 export interface IOrderProductDocument extends Document, IOrderProduct {
     _id: Types.ObjectId;
+    createdAt: Date;
+    updatedAt: Date;
+
 }
 const OrderProductSchema: Schema<IOrderProductDocument> = new Schema(
     {
