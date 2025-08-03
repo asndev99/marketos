@@ -5,8 +5,6 @@ import { MongoUserRepository } from '../User/repository/user.repository';
 import { uploadBufferToCloudinary } from '../../Utils/helpers';
 import { MongoOrderRepository } from '../Order/repository/order.repository';
 import { ShopRepository } from '../Shop/repository/shop.repository';
-// import { orderUpdateValidation } from './interface';
-// import { Types } from 'mongoose';
 import { getDayName } from '../../Utils/helpers';
 import { IOrderProductDocument } from '../Order/order.model';
 
