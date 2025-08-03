@@ -9,6 +9,8 @@ const shopRouter = express.Router();
 
 shopRouter.post(
     '/complete-profile',
+    verifyUser,
+    authorizeRole(UserRole.SHOPKEEPER),
     validateSchema(createShopProfileSchema),
     shopController.completeShopDetails
 );

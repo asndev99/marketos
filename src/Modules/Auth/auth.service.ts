@@ -40,17 +40,17 @@ const login = async (req: Request, res: Response) => {
         _id: user._id.toString(),
         role: user.role,
     });
-    return { accessToken, isProfileCompleted: user?.isProfileCompleted };
+    return { accessToken, isProfileCompleted: user.isProfileCompleted };
 };
 
 const createShop = async (req: Request) => {
-    const { username, password, role } = req.body;
+    const { username, password } = req.body;
     const existingUsername = await userRepository.findByUsername(username);
     if (existingUsername) {
         throw new BadRequestError('This username is already in use');
     }
     const hashPassword = bcrypt.hashSync(password, 10);
-    const shopKeeper = await userRepository.create({ username, password: hashPassword, role });
+    const shopKeeper = await userRepository.create({ username, password: hashPassword, role: UserRole.SHOPKEEPER });
     const accessToken = TokenService.generateAccessToken({
         _id: shopKeeper._id.toString(),
         role: shopKeeper.role,

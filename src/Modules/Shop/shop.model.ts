@@ -56,6 +56,6 @@ const shopSchema: Schema<IShopDocument> = new Schema({
         required: false,
         default:null
     },
-});
+});             
 shopSchema.index({ location: '2dsphere' });
 export const ShopModel = mongoose.model<IShopDocument>('Shop', shopSchema);
