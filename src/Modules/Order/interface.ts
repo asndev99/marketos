@@ -15,6 +15,8 @@ export interface IOrderProduct {
     companyId: Types.ObjectId;
     quantity?: number;
     price: number;
+    deliveredQuantity: number,
+    finalPrice: number,
     orderTimeUnitProductPrice: number;
     isOrderPlaced?: boolean;
     orderStatus?: OrderStatus;

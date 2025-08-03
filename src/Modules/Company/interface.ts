@@ -19,3 +19,10 @@ export interface ICompany {
     isPopular: Boolean;
     popularityRate: Number;
 }
+
+export interface orderUpdateValidation {
+    orderId: Types.ObjectId;
+    quantity: number;
+    status: string,
+    price: number
+}
