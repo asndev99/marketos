@@ -22,4 +22,5 @@ companyRouter.get('/order/:id', verifyUser, authorizeRole(UserRole.COMPANY), com
 companyRouter.patch('/update-order/', verifyUser, authorizeRole(UserRole.COMPANY), companyController.updateOrder);
 companyRouter.get('/order-analytics', verifyUser, authorizeRole(UserRole.COMPANY), companyController.orderAnalytics);
 companyRouter.get('/income-analytics', verifyUser, authorizeRole(UserRole.COMPANY), companyController.incomeAnalytics);
+companyRouter.get('/order-percent', verifyUser, authorizeRole(UserRole.COMPANY), companyController.orderPercentageAnalytics);
 export default companyRouter;
