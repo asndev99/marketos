@@ -146,7 +146,7 @@ const fetchSingleorder = async (req: Request, res: Response) => {
               _id: myOrder?._id,
               orderTime: myOrder?.orderTime,
               orderTimeEpoch: myOrder?.orderTimeEpoch,
-            //   totalPrice: myOrder?.totalPrice,
+              //   totalPrice: myOrder?.totalPrice,
               totalPrice: myOrder?.orderProducts?.reduce(
                   (acc, product) => acc + (product?.finalPrice || 0),
                   0
@@ -181,9 +181,26 @@ const fetchSingleorder = async (req: Request, res: Response) => {
         : null;
 };
 
+const pieAnalytics = async (req: Request, res: Response) => {
+    const allIds = await orderRepository.orderIds((req?.user?._id).toString());
+    const orders = await orderRepository.shopOrderAnalytics(allIds);
+    const _orders = orders.filter((order) => order.orderStatus !== 'DELIVERED');
+
+    const receivedOrders = _orders.filter((order) => order.orderStatus === 'RECEIVED');
+    const companyCancelled = _orders.filter((order) => order.orderStatus === 'COMPANY_CANCELLED');
+    const pending = _orders.filter((order) => order.orderStatus === 'PENDING');
+
+    return {
+        weeklyReceivedOrdersPercentage: Math.round((receivedOrders.length / _orders.length) * 100),
+        weeklyCompanyCancelledPercentage: Math.round((companyCancelled.length / _orders.length) * 100),
+        weeklyPendingPercentage: Math.round((pending.length / _orders.length) * 100),
+    };
+};
+
 export default {
     orderSummary,
     orderPlacement,
     allOrders,
     fetchSingleorder,
+    pieAnalytics,
 };

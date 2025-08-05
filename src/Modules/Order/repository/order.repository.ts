@@ -312,4 +312,21 @@ export class MongoOrderRepository implements IOrderRepository {
             createdAt: { $gte: sevenDaysAgo },
         });
     }
+
+    async orderIds(userId: string): Promise<string[]> {
+        const orders = await UserOrderModel.find({ userId }).select('_id').lean();
+        const ids = orders.map((order) => (order._id.toString()));
+        return ids;
+    }
+
+    async shopOrderAnalytics(orderIds: string[]): Promise<IOrderProductDocument[]> {
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 10);
+        return OrderProductModel.find({
+            orderId: {
+                $in: orderIds,
+            },
+            createdAt: { $gte: sevenDaysAgo },
+        });
+    }
 }

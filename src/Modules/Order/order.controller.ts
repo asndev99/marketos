@@ -48,9 +48,20 @@ const mySingleOrder = async (req: Request, res: Response, next: NextFunction) =>
     }
 };
 
+const pieChartAnalytics = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const data = await orderService.pieAnalytics(req, res);
+        return successResponse(res, 200, 'Successfully Fetched Order Pie-Chart Analytics ', data);
+    } catch (error) {
+        console.log('Error in fetching in orders', error);
+        next(error);
+    }
+};
+
 export default {
     fetchOrderSummary,
     placeAnOrder,
     myOrders,
-    mySingleOrder
+    mySingleOrder,
+    pieChartAnalytics
 };

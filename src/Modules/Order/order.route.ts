@@ -30,4 +30,10 @@ orderRouter.get(
     authorizeRole(UserRole.SHOPKEEPER),
     orderController.mySingleOrder
 );
+orderRouter.get(
+    '/pie-analytics',
+    verifyUser,
+    authorizeRole(UserRole.SHOPKEEPER),
+    orderController.pieChartAnalytics
+);
 export default orderRouter;
