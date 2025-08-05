@@ -77,6 +77,16 @@ const incomeAnalytics = async (req: Request, res: Response, next: NextFunction) 
   }
 };
 
+const orderPercentageAnalytics = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await companyService.pieChart(req, res);
+    return successResponse(res, 200, "Get order percentage analytics Successfully", data);
+  } catch (error) {
+    console.log("Error in fetching all orders", error);
+    next(error);
+  }
+};
+
 export default {
   createProfile,
   getProfile,
@@ -84,5 +94,6 @@ export default {
   getOrder,
   updateOrder,
   orderAnalytics,
-  incomeAnalytics
+  incomeAnalytics,
+  orderPercentageAnalytics
 };
