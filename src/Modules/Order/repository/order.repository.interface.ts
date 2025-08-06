@@ -24,4 +24,5 @@ export interface IOrderRepository{
     orderIds(payload: string): Promise<string[]>;
     companyAnalyticsOrders(payload: string): Promise<IOrderProductDocument[]>;
     shopOrderAnalytics(payload: string[]): Promise<IOrderProductDocument[]>;
+    updateOrderForShop(orderId: string, status: string): Promise<any>;
 }

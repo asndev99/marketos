@@ -315,7 +315,7 @@ export class MongoOrderRepository implements IOrderRepository {
 
     async orderIds(userId: string): Promise<string[]> {
         const orders = await UserOrderModel.find({ userId }).select('_id').lean();
-        const ids = orders.map((order) => (order._id.toString()));
+        const ids = orders.map((order) => order._id.toString());
         return ids;
     }
 
@@ -328,5 +328,28 @@ export class MongoOrderRepository implements IOrderRepository {
             },
             createdAt: { $gte: sevenDaysAgo },
         });
+    }
+
+    async updateOrderForShop(orderId: string, status: string): Promise<any> {
+        const order = await OrderProductModel.findById(orderId).select('orderStatus');
+        if (order?.orderStatus !== 'PENDING' && status === 'USER_CANCELLED') {
+            return {
+                message: "Order Is Already Accepted by company You Cant't cancel this!",
+                status: false,
+            };
+        }
+
+        if (order?.orderStatus !== 'DELIVERED' && status === 'RECEIVED') {
+            return {
+                message: "You Can't received this order untill it is delivered by company",
+                status: false,
+            };
+        }
+
+        await OrderProductModel.updateOne({ _id: orderId }, { orderStatus: status });
+        return {
+            message: `You ${status === "USER_CANCELLED" ? "Cancelled" : "Reeived"} this product`,
+            status: true,
+        };
     }
 }

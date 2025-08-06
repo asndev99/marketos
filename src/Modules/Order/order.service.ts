@@ -170,6 +170,7 @@ const fetchSingleorder = async (req: Request, res: Response) => {
                   finalPrice: product?.finalPrice,
                   orderTimeUnitProductPrice: product?.orderTimeUnitProductPrice,
                   paymentMethod: product?.PaymentMethod,
+                  orderStatus: product?.orderStatus,
                   isOrderPlaced: product?.isOrderPlaced,
                   paymentTransaction: {
                       paymentId: product?.paymentTransaction?._id,
@@ -192,9 +193,18 @@ const pieAnalytics = async (req: Request, res: Response) => {
 
     return {
         weeklyReceivedOrdersPercentage: Math.round((receivedOrders.length / _orders.length) * 100),
-        weeklyCompanyCancelledPercentage: Math.round((companyCancelled.length / _orders.length) * 100),
+        weeklyCompanyCancelledPercentage: Math.round(
+            (companyCancelled.length / _orders.length) * 100
+        ),
         weeklyPendingPercentage: Math.round((pending.length / _orders.length) * 100),
     };
+};
+
+const updateOrderStatus = async (req: Request, res: Response) => {
+    const orderId = req?.params?.id;
+    const status = req?.query?.status as string;
+    const data = await orderRepository.updateOrderForShop(orderId, status);
+    return data;
 };
 
 export default {
@@ -203,4 +213,5 @@ export default {
     allOrders,
     fetchSingleorder,
     pieAnalytics,
+    updateOrderStatus
 };
