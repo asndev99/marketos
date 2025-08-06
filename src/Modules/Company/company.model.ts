@@ -23,7 +23,7 @@ const companySchema: Schema<ICompanyDocument> = new Schema(
             required: false,
         },
         category: {
-            type: String,
+            type: [String],
             required: true,
         },
         state: {

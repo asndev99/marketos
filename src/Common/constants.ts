@@ -48,5 +48,23 @@ export const companiesCategories = [
     'Pet Supplies',
 ];
 
+export const categoryMap: Record<string, string> = {
+    "FVGS": 'Fruits & Vegetables',
+    "DE": 'Dairy & Eggs',
+    "MT": "Meat & Seafood",
+    "BK": "Bakery",
+    "PS": "PaintryStaples",
+    "BVGS": "Beverages",
+    "SCT": 'Snacks & Confactionery',
+    "FFDS": 'Frozen Foods',
+    "CGDS": 'Canned & Jarred Goods',
+    "PRGS": 'Pasta,Rice & Grains',
+    "CPS": 'Condiments & Spices',
+    "BRFI": "Breakfast Items",
+    "HORFS": "Health & Organic Foods",
+    "BPS": "Baby Products",
+    "PTS": "Pet Supplies"
+}
+
 //for valdiation purpose
 export const roles = ['ADMIN', 'COMPANY', 'RIDER', 'SHOPKEEPER', 'BOOKKEEPER'] as const;

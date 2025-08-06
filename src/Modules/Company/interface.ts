@@ -4,7 +4,7 @@ export interface ICompany {
     companyName: String;
     establishedDate: String;
     websiteLink: String;
-    category: String;
+    category: [String];
     state: String;
     city: String;
     address: String;

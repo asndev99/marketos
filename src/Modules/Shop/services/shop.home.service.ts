@@ -1,4 +1,4 @@
-import { companiesCategories } from '../../../Common/constants';
+import { categoryMap, companiesCategories } from '../../../Common/constants';
 import { MongoCompanyRepository } from '../../Company/repository/company.repository';
 import { Request } from 'express';
 import { MongoProductRepository } from '../../Product/repository/product.repository';
@@ -8,7 +8,10 @@ const companyRepository = new MongoCompanyRepository();
 const productRepository = new MongoProductRepository();
 
 const getCategories = async (req: Request) => {
-    return companiesCategories;
+    return Object.keys(categoryMap).map((item) => ({
+        key: item,
+        value: categoryMap[item]
+    }));
 };
 
 const getPopularCompanies = async (req: Request) => {
@@ -52,8 +55,11 @@ const getAllCompanies = async (req: Request) => {
 const getCategoryProducts = async (req: Request) => {
     const { data, meta } = await productRepository.FindMany({
         filter: {
-            category: req?.query?.category,
+            category: categoryMap[req.query.category as string],
             isDeleted: false,
+            stockQuantity: {
+                $gt: 0
+            }
         },
         page: req.query.page ? parseInt(req.query.page as string, 10) : undefined,
         limit: req.query.limit ? parseInt(req.query.limit as string, 10) : undefined,
