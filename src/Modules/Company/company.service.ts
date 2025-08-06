@@ -191,7 +191,7 @@ const OrderAnalytics = async (req: Request, res: Response) => {
     const companyId: string = company?.id.toString();
 
     const orders = await orderRepository.companyAnalyticsOrders(companyId);
-    const deliveredOrders = orders.filter((order) => order.orderStatus === 'DELIVERED');
+    const deliveredOrders = orders.filter((order) => order.orderStatus === 'DELIVERED' || order.orderStatus === 'RECEIVED');
     const companyCancelled = orders.filter((order) => order.orderStatus === 'COMPANY_CANCELLED');
     const pending = orders.filter((order) => order.orderStatus === 'PENDING');
 
@@ -225,14 +225,14 @@ const pieChart = async (req: Request, res: Response) => {
     const companyId: string = company?.id.toString();
 
     const orders = await orderRepository.companyAnalyticsOrders(companyId);
-    const deliveredOrders = orders.filter((order) => order.orderStatus === 'DELIVERED');
+    const deliveredOrders = orders.filter((order) => order.orderStatus === 'DELIVERED' || order.orderStatus === 'RECEIVED');
     const companyCancelled = orders.filter((order) => order.orderStatus === 'COMPANY_CANCELLED');
     const pending = orders.filter((order) => order.orderStatus === 'PENDING');
 
     return {
-        weeklyDeliveredOrdersPercentage: (deliveredOrders.length / orders.length) * 100,
-        weeklyCompanyCancelledPercentage: (companyCancelled.length / orders.length) * 100,
-        weeklyPendingPercentage: (pending.length / orders.length) * 100,
+        weeklyDeliveredOrdersPercentage: Math.round((deliveredOrders.length / orders.length) * 100),
+        weeklyCompanyCancelledPercentage: Math.round((companyCancelled.length / orders.length) * 100),
+        weeklyPendingPercentage: Math.round((pending.length / orders.length) * 100),
     };
 };
 

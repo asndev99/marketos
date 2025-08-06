@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
-import { successResponse } from '../../Utils/Response';
+import { successResponse, errorResponse } from '../../Utils/Response';
 import orderService from './order.service';
 
 const fetchOrderSummary = async (req: Request, res: Response, next: NextFunction) => {
@@ -48,9 +48,32 @@ const mySingleOrder = async (req: Request, res: Response, next: NextFunction) =>
     }
 };
 
+const pieChartAnalytics = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const data = await orderService.pieAnalytics(req, res);
+        return successResponse(res, 200, 'Successfully Fetched Order Pie-Chart Analytics ', data);
+    } catch (error) {
+        console.log('Error in fetching in orders', error);
+        next(error);
+    }
+};
+
+const updateOrderStatus = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const data = await orderService.updateOrderStatus(req, res);
+        if(data.status) return successResponse(res, 200, 'Successfully Update the order status ', data);
+        else return errorResponse(res, 400, data?.message);
+    } catch (error) {
+        console.log('Error in fetching in orders', error);
+        next(error);
+    }
+};
+
 export default {
     fetchOrderSummary,
     placeAnOrder,
     myOrders,
-    mySingleOrder
+    mySingleOrder,
+    pieChartAnalytics,
+    updateOrderStatus
 };

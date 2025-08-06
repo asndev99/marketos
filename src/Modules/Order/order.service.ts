@@ -146,7 +146,7 @@ const fetchSingleorder = async (req: Request, res: Response) => {
               _id: myOrder?._id,
               orderTime: myOrder?.orderTime,
               orderTimeEpoch: myOrder?.orderTimeEpoch,
-            //   totalPrice: myOrder?.totalPrice,
+              //   totalPrice: myOrder?.totalPrice,
               totalPrice: myOrder?.orderProducts?.reduce(
                   (acc, product) => acc + (product?.finalPrice || 0),
                   0
@@ -170,6 +170,7 @@ const fetchSingleorder = async (req: Request, res: Response) => {
                   finalPrice: product?.finalPrice,
                   orderTimeUnitProductPrice: product?.orderTimeUnitProductPrice,
                   paymentMethod: product?.PaymentMethod,
+                  orderStatus: product?.orderStatus,
                   isOrderPlaced: product?.isOrderPlaced,
                   paymentTransaction: {
                       paymentId: product?.paymentTransaction?._id,
@@ -181,9 +182,36 @@ const fetchSingleorder = async (req: Request, res: Response) => {
         : null;
 };
 
+const pieAnalytics = async (req: Request, res: Response) => {
+    const allIds = await orderRepository.orderIds((req?.user?._id).toString());
+    const orders = await orderRepository.shopOrderAnalytics(allIds);
+    const _orders = orders.filter((order) => order.orderStatus !== 'DELIVERED');
+
+    const receivedOrders = _orders.filter((order) => order.orderStatus === 'RECEIVED');
+    const companyCancelled = _orders.filter((order) => order.orderStatus === 'COMPANY_CANCELLED');
+    const pending = _orders.filter((order) => order.orderStatus === 'PENDING');
+
+    return {
+        weeklyReceivedOrdersPercentage: Math.round((receivedOrders.length / _orders.length) * 100),
+        weeklyCompanyCancelledPercentage: Math.round(
+            (companyCancelled.length / _orders.length) * 100
+        ),
+        weeklyPendingPercentage: Math.round((pending.length / _orders.length) * 100),
+    };
+};
+
+const updateOrderStatus = async (req: Request, res: Response) => {
+    const orderId = req?.params?.id;
+    const status = req?.query?.status as string;
+    const data = await orderRepository.updateOrderForShop(orderId, status);
+    return data;
+};
+
 export default {
     orderSummary,
     orderPlacement,
     allOrders,
     fetchSingleorder,
+    pieAnalytics,
+    updateOrderStatus
 };
