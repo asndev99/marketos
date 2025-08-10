@@ -23,6 +23,16 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
     }
 };
 
+export const updateProfilePicture = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const data = await shopProfileService.updateProfilePicture(req);
+        return successResponse(res, 200, "Shop Image Updated Successfully", data)
+    } catch (error) {
+        console.log("Error in updating profile Image", error);
+        next(error);
+    }
+}
+
 export const getTopCategories = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const data = await shopHomeService.getCategories(req);
@@ -86,6 +96,7 @@ export const companyProducts = async (req: Request, res: Response, next: NextFun
 export default {
     completeShopDetails,
     getProfile,
+    updateProfilePicture,
     getTopCategories,
     popularCompanies,
     discountedProducts,

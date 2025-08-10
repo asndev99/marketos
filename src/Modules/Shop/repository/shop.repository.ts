@@ -10,4 +10,11 @@ export class ShopRepository implements IShopRepository {
     async findOne(data: FilterQuery<IShopDocument>): Promise<IShopDocument | null> {
         return ShopModel.findOne(data);
     }
+
+    async findOneAndUpdate(
+        where: FilterQuery<IShopDocument>,
+        data: Partial<IShopDocument>
+    ): Promise<IShopDocument | null> {
+        return ShopModel.findOneAndUpdate(where, data, { new: true });
+    }
 }

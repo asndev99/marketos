@@ -6,6 +6,7 @@ export const createShopProfileSchema = z
     .object({
         ownerName: baseStringSchema,
         shopName: baseStringSchema,
+        shopNumber:baseStringSchema,
         mobileNumber: mobileNumberSchema,
         shopAddress: baseStringSchema,
         landMark: baseStringSchema,

@@ -8,6 +8,7 @@ export interface IShop {
     mobileNumber: string;
     shopAddress: string;
     landMark?: string;
+    shopImage?: string | null;
     location: {
         type: 'Point';
         coordinates: [number, number];
@@ -15,10 +16,12 @@ export interface IShop {
     NIC: string;
     ntn?: string;
 }
+
 export interface CreateShopPayload {
     ownerName: string;
     shopName: string;
     mobileNumber: string;
+    shopNumber: string,
     shopAddress: string;
     landmark: string;
     latitude: number;

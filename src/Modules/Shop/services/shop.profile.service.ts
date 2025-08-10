@@ -3,6 +3,7 @@ import { ShopRepository } from '../repository/shop.repository';
 import { BadRequestError, NotFoundError } from '../../../Utils/Error';
 import { MongoUserRepository } from '../../User/repository/user.repository';
 import { CreateShopPayload } from '../interface';
+import { uploadBufferToCloudinary } from '../../../Utils/helpers';
 
 const shopRepository = new ShopRepository();
 const userRepository = new MongoUserRepository();
@@ -41,6 +42,27 @@ const completeShopDetails = async (req: Request) => {
 
 }
 
+const updateProfilePicture = async (req: Request) => {
+    const files = req.files as Record<string, Express.Multer.File[]>;
+    if (!files || !files['shopImage'] || files['shopImage'].length === 0) {
+        return await shopRepository.findOneAndUpdate(
+            { userId: req.user._id },
+            { shopImage: null }
+        );
+    }
+    const file = files['shopImage'][0];
+    const { url: logo } = await uploadBufferToCloudinary(
+        file.buffer,
+        file.originalname,
+        'shop'
+    );
+    return await shopRepository.findOneAndUpdate(
+        { userId: req.user._id },
+        { shopImage: logo }
+    );
+};
+
+
 const getProfile = async (req: Request) => {
     const data = await shopRepository.findOne({ userId: req.user._id });
     if (!data) throw new NotFoundError('Shop Not Found');
@@ -51,4 +73,5 @@ const getProfile = async (req: Request) => {
 export default {
     getProfile,
     completeShopDetails,
+    updateProfilePicture
 };

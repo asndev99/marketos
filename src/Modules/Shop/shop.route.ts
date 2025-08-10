@@ -5,6 +5,7 @@ import { createShopProfileSchema } from './validation/createShopProfileSchema';
 import { verifyUser } from '../../Middlewares/auth.middleware';
 import { authorizeRole } from '../../Middlewares/authorize.roles.middleware';
 import { UserRole } from '../../Common/constants';
+import { createUploadMiddleware } from '../../Middlewares/formData/multer.middleware';
 const shopRouter = express.Router();
 
 shopRouter.post(
@@ -21,7 +22,17 @@ shopRouter.get(
     authorizeRole(UserRole.SHOPKEEPER),
     shopController.getProfile
 );
-
+shopRouter.patch(
+    '/image',
+    verifyUser,
+    authorizeRole(UserRole.SHOPKEEPER),
+    createUploadMiddleware([{
+        name: "shopImage",
+        maxCount: 1,
+        required: false
+    }]),
+    shopController.updateProfilePicture
+);
 shopRouter.get(
     '/top-categories',
     verifyUser,

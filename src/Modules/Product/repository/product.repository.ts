@@ -62,7 +62,7 @@ export class MongoProductRepository implements IProductRepository {
             [sortBy]: sortOrder === 'asc' ? 1 : -1,
         };
         const [products, count] = await Promise.all([
-            ProductModel.find(filter).skip(skip).sort(sort).lean(),
+            ProductModel.find(filter).populate({ path: "images" }).skip(skip).sort(sort).lean(),
             ProductModel.countDocuments(filter),
         ]);
 
