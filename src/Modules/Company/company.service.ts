@@ -79,7 +79,8 @@ const getCompanyDetails = async (req: Request, res: Response) => {
 const allOrders = async (req: Request, res: Response) => {
     const company = await companyRepository.findOne({ userId: req.user._id });
     const companyId: string = company?.id.toString();
-    const orders = await orderRepository.allOrdersForCompany(companyId);
+    const status = req?.query.status as string;
+    const orders = await orderRepository.allOrdersForCompany(status, companyId);
 
     const uniqueUserIds = [...new Set(orders.map((o) => o.userId.toString()))];
     const userCache = new Map<string, any>();

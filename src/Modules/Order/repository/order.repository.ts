@@ -121,7 +121,7 @@ export class MongoOrderRepository implements IOrderRepository {
         return userOrder[0];
     }
 
-    async allOrdersForCompany(companyId: string): Promise<IUserOrderPopulatedDocument[]> {
+    async allOrdersForCompany(orderStatus: string, companyId: string): Promise<IUserOrderPopulatedDocument[]> {
         const userOrders = await UserOrderModel.aggregate([
             {
                 $lookup: {
@@ -137,6 +137,7 @@ export class MongoOrderRepository implements IOrderRepository {
             {
                 $match: {
                     'orderProducts.companyId': new Types.ObjectId(companyId),
+                    'orderProducts.orderStatus': orderStatus === "DELIVERED" ? { $in: ["DELIVERED", "RECEIVED"] } : orderStatus
                 },
             },
             {
