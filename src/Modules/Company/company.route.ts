@@ -16,6 +16,16 @@ companyRouter.post(
     companyController.createProfile
 );
 
+companyRouter.patch(
+    '/update-profile',
+    verifyUser,
+    authorizeRole(UserRole.COMPANY),
+    createUploadMiddleware([
+        { name: 'logo', maxCount: 1, required: false },
+    ]),
+    companyController.updateProfile
+);
+
 companyRouter.get('/', verifyUser, authorizeRole(UserRole.COMPANY), companyController.getProfile);
 companyRouter.get('/order', verifyUser, authorizeRole(UserRole.COMPANY), companyController.getOrders);
 companyRouter.get('/order/:id', verifyUser, authorizeRole(UserRole.COMPANY), companyController.getOrder);

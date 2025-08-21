@@ -35,12 +35,45 @@ const createCompanyDetails = async (req: Request, res: Response) => {
         'companies'
     );
 
-    const data = companyRepository.create({
+    companyRepository.create({
         userId,
         ...req.body,
         profileLogo: logo,
     });
     await userRepository.findByIdAndUpdate(userId.toString(), { isProfileCompleted: true });
+};
+
+const updateCompanyDetails = async (req: Request, res: Response) => {
+    let { numOfDistribution, companyName } = req.body;
+    const files = req?.files as Record<string, Express.Multer.File[]>;
+    const logoFile = files['logo']?.[0];
+    const userId = req.user._id;
+
+    if (numOfDistribution) numOfDistribution = Number(numOfDistribution);
+    const isCompanyAlreadyExist = await companyRepository.findOne({
+        userId,
+        companyName,
+    });
+
+    if (!isCompanyAlreadyExist) {
+        throw new BadRequestError('Company Not Found');
+    }
+
+    let logo;
+    if (logoFile) {
+        const { url } = await uploadBufferToCloudinary(
+            logoFile.buffer,
+            logoFile.originalname,
+            'companies'
+        );
+        logo = url;
+    }
+
+    await companyRepository.update(isCompanyAlreadyExist?.id.toString(), {
+        ...req?.body,
+        ...(logo && { logo }),
+    });
+    return true;
 };
 
 const getCompanyDetails = async (req: Request, res: Response) => {
@@ -191,7 +224,9 @@ const OrderAnalytics = async (req: Request, res: Response) => {
     const companyId: string = company?.id.toString();
 
     const orders = await orderRepository.companyAnalyticsOrders(companyId);
-    const deliveredOrders = orders.filter((order) => order.orderStatus === 'DELIVERED' || order.orderStatus === 'RECEIVED');
+    const deliveredOrders = orders.filter(
+        (order) => order.orderStatus === 'DELIVERED' || order.orderStatus === 'RECEIVED'
+    );
     const companyCancelled = orders.filter((order) => order.orderStatus === 'COMPANY_CANCELLED');
     const pending = orders.filter((order) => order.orderStatus === 'PENDING');
 
@@ -225,13 +260,17 @@ const pieChart = async (req: Request, res: Response) => {
     const companyId: string = company?.id.toString();
 
     const orders = await orderRepository.companyAnalyticsOrders(companyId);
-    const deliveredOrders = orders.filter((order) => order.orderStatus === 'DELIVERED' || order.orderStatus === 'RECEIVED');
+    const deliveredOrders = orders.filter(
+        (order) => order.orderStatus === 'DELIVERED' || order.orderStatus === 'RECEIVED'
+    );
     const companyCancelled = orders.filter((order) => order.orderStatus === 'COMPANY_CANCELLED');
     const pending = orders.filter((order) => order.orderStatus === 'PENDING');
 
     return {
         weeklyDeliveredOrdersPercentage: Math.round((deliveredOrders.length / orders.length) * 100),
-        weeklyCompanyCancelledPercentage: Math.round((companyCancelled.length / orders.length) * 100),
+        weeklyCompanyCancelledPercentage: Math.round(
+            (companyCancelled.length / orders.length) * 100
+        ),
         weeklyPendingPercentage: Math.round((pending.length / orders.length) * 100),
     };
 };
@@ -364,5 +403,6 @@ export default {
     updateOrder,
     OrderAnalytics,
     IncomeAnalytics,
-    pieChart
+    pieChart,
+    updateCompanyDetails
 };

@@ -17,6 +17,16 @@ const createProfile = async (req: MulterRequest, res: Response, next: NextFuncti
   }
 };
 
+const updateProfile = async (req: MulterRequest, res: Response, next: NextFunction) => {
+  try {
+    const data = await companyService.updateCompanyDetails(req, res);
+    return successResponse(res, 200, "Successfully Updated Company Profile ", data);
+  } catch (error) {
+    console.log("Error in Updating company", error);
+    next(error);
+  }
+};
+
 const getProfile = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = await companyService.getCompanyDetails(req, res);
@@ -95,5 +105,6 @@ export default {
   updateOrder,
   orderAnalytics,
   incomeAnalytics,
-  orderPercentageAnalytics
+  orderPercentageAnalytics,
+  updateProfile
 };
