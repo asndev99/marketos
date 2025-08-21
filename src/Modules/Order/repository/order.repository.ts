@@ -137,7 +137,7 @@ export class MongoOrderRepository implements IOrderRepository {
             {
                 $match: {
                     'orderProducts.companyId': new Types.ObjectId(companyId),
-                    'orderProducts.orderStatus': orderStatus === "DELIVERED" ? { $in: ["DELIVERED", "RECEIVED"] } : orderStatus
+                    'orderProducts.orderStatus': orderStatus === "RECEIVED" ? { $in: ["DELIVERED", "RECEIVED"] } : orderStatus
                 },
             },
             {
