@@ -14,12 +14,11 @@ const orderRepository = new MongoOrderRepository();
 const shopRepository = new ShopRepository();
 
 const createCompanyDetails = async (req: Request, res: Response) => {
-    let { numOfDistribution, companyName } = req.body;
+    let { companyName } = req.body;
     const files = req.files as Record<string, Express.Multer.File[]>;
     const logoFile = files['logo']?.[0];
     const userId = req.user._id;
 
-    numOfDistribution = Number(numOfDistribution);
     const isCompanyAlreadyExist = await companyRepository.findOne({
         userId,
         companyName,
@@ -44,15 +43,12 @@ const createCompanyDetails = async (req: Request, res: Response) => {
 };
 
 const updateCompanyDetails = async (req: Request, res: Response) => {
-    let { numOfDistribution, companyName } = req.body;
     const files = req?.files as Record<string, Express.Multer.File[]>;
     const logoFile = files['logo']?.[0];
     const userId = req.user._id;
 
-    if (numOfDistribution) numOfDistribution = Number(numOfDistribution);
     const isCompanyAlreadyExist = await companyRepository.findOne({
-        userId,
-        companyName,
+        userId
     });
 
     if (!isCompanyAlreadyExist) {
@@ -71,7 +67,7 @@ const updateCompanyDetails = async (req: Request, res: Response) => {
 
     await companyRepository.update(isCompanyAlreadyExist?.id.toString(), {
         ...req?.body,
-        ...(logo && { logo }),
+        ...(logo && { profileLogo: logo }),
     });
     return true;
 };
