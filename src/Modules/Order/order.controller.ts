@@ -64,7 +64,17 @@ const updateOrderStatus = async (req: Request, res: Response, next: NextFunction
         if(data.status) return successResponse(res, 200, 'Successfully Update the order status ', data);
         else return errorResponse(res, 400, data?.message);
     } catch (error) {
-        console.log('Error in fetching in orders', error);
+        console.log('Error in updating orders', error);
+        next(error);
+    }
+};
+
+const updateOrderPaymentStatus = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const data = await orderService.updateOrderPaymentStatus(req, res);
+        return successResponse(res, 200, 'Successfully Update the order payment status ', data);
+    } catch (error) {
+        console.log('Error in updating orders', error);
         next(error);
     }
 };
@@ -75,5 +85,6 @@ export default {
     myOrders,
     mySingleOrder,
     pieChartAnalytics,
-    updateOrderStatus
+    updateOrderStatus,
+    updateOrderPaymentStatus
 };

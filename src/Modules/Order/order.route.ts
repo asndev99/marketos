@@ -42,4 +42,10 @@ orderRouter.patch(
     authorizeRole(UserRole.SHOPKEEPER),
     orderController.updateOrderStatus
 );
+orderRouter.patch(
+    '/update-payment/:id',
+    verifyUser,
+    authorizeRole(UserRole.SHOPKEEPER),
+    orderController.updateOrderPaymentStatus
+);
 export default orderRouter;

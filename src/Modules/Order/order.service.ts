@@ -207,11 +207,26 @@ const updateOrderStatus = async (req: Request, res: Response) => {
     return data;
 };
 
+const updateOrderPaymentStatus = async (req: Request, res: Response) => {
+    const orderId = req?.params?.id;
+    const status = req?.query?.status as string;
+    await orderRepository.paymentUpdateForCompanyOrder([
+        {
+            id: new Types.ObjectId(orderId),
+            status,
+            price: 0,
+            quantity: 0,
+        },
+    ]);
+    return true;
+};
+
 export default {
     orderSummary,
     orderPlacement,
     allOrders,
     fetchSingleorder,
     pieAnalytics,
-    updateOrderStatus
+    updateOrderStatus,
+    updateOrderPaymentStatus
 };

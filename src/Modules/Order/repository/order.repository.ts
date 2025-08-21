@@ -307,7 +307,7 @@ export class MongoOrderRepository implements IOrderRepository {
     async paymentUpdateForCompanyOrder(payload: orderUpdateValidation[]): Promise<Boolean> {
         const operationsPayment = payload.map((item: orderUpdateValidation) => ({
             updateOne: {
-                filter: { id: item?.id },
+                filter: { _id: item?.id },
                 update: {
                     $set: {
                         paymentStatus: item?.status,
