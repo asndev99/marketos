@@ -20,7 +20,8 @@ export interface IOrderRepository{
     singleOrder(payload: FilterQuery<IUserOrderDocument>): Promise<IUserOrderPopulatedDocument>;
     allOrdersForCompany(payload: string): Promise<IUserOrderPopulatedDocument[]>;
     singleOrderForCompany(orderId: string, companyId: string): Promise<IUserOrderPopulatedDocument>;
-    orderUpdateForCompany(payload: orderUpdateValidation[]): Promise<Boolean>
+    orderUpdateForCompany(payload: orderUpdateValidation[]): Promise<Boolean>;
+    paymentUpdateForCompanyOrder(payload: orderUpdateValidation[]): Promise<Boolean>;
     orderIds(payload: string): Promise<string[]>;
     companyAnalyticsOrders(payload: string): Promise<IOrderProductDocument[]>;
     shopOrderAnalytics(payload: string[]): Promise<IOrderProductDocument[]>;

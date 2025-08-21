@@ -209,9 +209,17 @@ const singleOrder = async (req: Request, res: Response) => {
 
 const updateOrder = async (req: Request, res: Response) => {
     const company = await companyRepository.findOne({ userId: req.user._id });
-    const companyId: string = company?.id.toString();
+    // const companyId: string = company?.id.toString();
     const { orderUpdate } = req?.body;
     await orderRepository.orderUpdateForCompany(orderUpdate);
+    return true;
+};
+
+const updateOrderPaymentStatus = async (req: Request, res: Response) => {
+    const company = await companyRepository.findOne({ userId: req.user._id });
+    // const companyId: string = company?.id.toString();
+    const { paymentUpdate } = req?.body;
+    await orderRepository.paymentUpdateForCompanyOrder(paymentUpdate);
     return true;
 };
 
@@ -400,5 +408,6 @@ export default {
     OrderAnalytics,
     IncomeAnalytics,
     pieChart,
-    updateCompanyDetails
+    updateCompanyDetails,
+    updateOrderPaymentStatus
 };

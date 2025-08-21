@@ -36,7 +36,7 @@ orderRouter.get(
     authorizeRole(UserRole.SHOPKEEPER),
     orderController.pieChartAnalytics
 );
-orderRouter.get(
+orderRouter.patch(
     '/update-status/:id',
     verifyUser,
     authorizeRole(UserRole.SHOPKEEPER),

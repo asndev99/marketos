@@ -21,7 +21,7 @@ export interface ICompany {
 }
 
 export interface orderUpdateValidation {
-    orderId: Types.ObjectId;
+    id: Types.ObjectId;
     quantity: number;
     status: string,
     price: number

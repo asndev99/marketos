@@ -278,7 +278,7 @@ export class MongoOrderRepository implements IOrderRepository {
     async orderUpdateForCompany(payload: orderUpdateValidation[]): Promise<Boolean> {
         const operations = payload.map((item: orderUpdateValidation) => ({
             updateOne: {
-                filter: { _id: item?.orderId },
+                filter: { _id: item?.id },
                 update: {
                     $set: {
                         orderStatus: item?.status,
@@ -291,7 +291,7 @@ export class MongoOrderRepository implements IOrderRepository {
         }));
         const operationsPayment = payload.map((item: orderUpdateValidation) => ({
             updateOne: {
-                filter: { orderProductId: item?.orderId },
+                filter: { orderProductId: item?.id },
                 update: {
                     $set: {
                         amount: item?.price,
@@ -300,6 +300,21 @@ export class MongoOrderRepository implements IOrderRepository {
             },
         }));
         await OrderProductModel.bulkWrite(operations);
+        await PaymentTransactionModel.bulkWrite(operationsPayment);
+        return true;
+    }
+
+    async paymentUpdateForCompanyOrder(payload: orderUpdateValidation[]): Promise<Boolean> {
+        const operationsPayment = payload.map((item: orderUpdateValidation) => ({
+            updateOne: {
+                filter: { id: item?.id },
+                update: {
+                    $set: {
+                        paymentStatus: item?.status,
+                    },
+                },
+            },
+        }));
         await PaymentTransactionModel.bulkWrite(operationsPayment);
         return true;
     }
@@ -348,7 +363,7 @@ export class MongoOrderRepository implements IOrderRepository {
 
         await OrderProductModel.updateOne({ _id: orderId }, { orderStatus: status });
         return {
-            message: `You ${status === "USER_CANCELLED" ? "Cancelled" : "Reeived"} this product`,
+            message: `You ${status === 'USER_CANCELLED' ? 'Cancelled' : 'Reeived'} this product`,
             status: true,
         };
     }

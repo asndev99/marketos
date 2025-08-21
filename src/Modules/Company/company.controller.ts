@@ -67,6 +67,16 @@ const updateOrder = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const updateOrderPayment = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data = await companyService.updateOrderPaymentStatus(req, res);
+    return successResponse(res, 200, "Update order payment status Successfully", data);
+  } catch (error) {
+    console.log("Error in fetching all orders", error);
+    next(error);
+  }
+};
+
 const orderAnalytics = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = await companyService.OrderAnalytics(req, res);
@@ -106,5 +116,6 @@ export default {
   orderAnalytics,
   incomeAnalytics,
   orderPercentageAnalytics,
-  updateProfile
+  updateProfile,
+  updateOrderPayment
 };
