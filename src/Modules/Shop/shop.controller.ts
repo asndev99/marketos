@@ -26,12 +26,12 @@ export const getProfile = async (req: Request, res: Response, next: NextFunction
 export const updateProfilePicture = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const data = await shopProfileService.updateProfilePicture(req);
-        return successResponse(res, 200, "Shop Image Updated Successfully", data)
+        return successResponse(res, 200, 'Shop Image Updated Successfully', data);
     } catch (error) {
-        console.log("Error in updating profile Image", error);
+        console.log('Error in updating profile Image', error);
         next(error);
     }
-}
+};
 
 export const getTopCategories = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -93,6 +93,16 @@ export const companyProducts = async (req: Request, res: Response, next: NextFun
     }
 };
 
+export const getCompaniesByCategory = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const data = await shopHomeService.getCompaniesByProducts(req);
+        return successResponse(res, 200, 'Companies by category fetched successfully', data);
+    } catch (error) {
+        console.log('Error in getting companies by category', error);
+        next(error);
+    }
+};
+
 export default {
     completeShopDetails,
     getProfile,
@@ -103,4 +113,5 @@ export default {
     allCompanies,
     categoryProducts,
     companyProducts,
+    getCompaniesByCategory,
 };

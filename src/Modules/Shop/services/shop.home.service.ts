@@ -3,6 +3,9 @@ import { MongoCompanyRepository } from '../../Company/repository/company.reposit
 import { Request } from 'express';
 import { MongoProductRepository } from '../../Product/repository/product.repository';
 import { discountedProductsDto } from '../../Product/dto';
+import { FilterQuery } from 'mongoose';
+import { ICompanyDocument } from '../../Company/company.model';
+import { IProductDocument } from '../../Product/product.model';
 
 const companyRepository = new MongoCompanyRepository();
 const productRepository = new MongoProductRepository();
@@ -10,7 +13,7 @@ const productRepository = new MongoProductRepository();
 const getCategories = async (req: Request) => {
     return Object.keys(categoryMap).map((item) => ({
         key: item,
-        value: categoryMap[item]
+        value: categoryMap[item],
     }));
 };
 
@@ -58,8 +61,8 @@ const getCategoryProducts = async (req: Request) => {
             category: categoryMap[req.query.category as string],
             isDeleted: false,
             stockQuantity: {
-                $gt: 0
-            }
+                $gt: 0,
+            },
         },
         page: req.query.page ? parseInt(req.query.page as string, 10) : undefined,
         limit: req.query.limit ? parseInt(req.query.limit as string, 10) : undefined,
@@ -73,9 +76,18 @@ const getCategoryProducts = async (req: Request) => {
 };
 
 const getCompanyProducts = async (req: Request) => {
+    let filter: FilterQuery<IProductDocument> = {
+        companyId: req.params.id.toString(),
+        isDeleted: false,
+    };
+
+    if (req.query.categoryName && categoryMap[req.query.categoryName as string]) {
+        filter.category = categoryMap[req.query.categoryName as string];
+    }
+
     const { data, meta } = await productRepository.FindMany({
         filter: {
-            companyId: (req?.params?.id).toString(),
+            companyId: req.params.id.toString(),
             isDeleted: false,
         },
         page: req.query.page ? parseInt(req.query.page as string, 10) : undefined,
@@ -89,11 +101,18 @@ const getCompanyProducts = async (req: Request) => {
     };
 };
 
+const getCompaniesByProducts = async (req: Request) => {
+    return companyRepository.findMany({
+        filter: { category: req.query.category as string },
+    });
+};
+
 export default {
     getCategories,
     getPopularCompanies,
     getDiscountedProducts,
     getAllCompanies,
     getCategoryProducts,
-    getCompanyProducts
+    getCompanyProducts,
+    getCompaniesByProducts,
 };

@@ -7,8 +7,8 @@ export class MongoCompanyRepository implements ICompanyRepository {
     async create(data: Partial<ICompanyDocument>): Promise<ICompanyDocument> {
         return CompanyModel.create(data);
     }
-    async update(id: string, data: Partial<ICompanyDocument>): Promise<ICompanyDocument | null>{
-        return CompanyModel.findByIdAndUpdate(id, {...data});
+    async update(id: string, data: Partial<ICompanyDocument>): Promise<ICompanyDocument | null> {
+        return CompanyModel.findByIdAndUpdate(id, { ...data });
     }
     async findOne(
         payload: FilterQuery<ICompanyDocument>,

@@ -26,11 +26,13 @@ shopRouter.patch(
     '/image',
     verifyUser,
     authorizeRole(UserRole.SHOPKEEPER),
-    createUploadMiddleware([{
-        name: "shopImage",
-        maxCount: 1,
-        required: false
-    }]),
+    createUploadMiddleware([
+        {
+            name: 'shopImage',
+            maxCount: 1,
+            required: false,
+        },
+    ]),
     shopController.updateProfilePicture
 );
 shopRouter.get(
@@ -73,6 +75,13 @@ shopRouter.get(
     verifyUser,
     authorizeRole(UserRole.SHOPKEEPER),
     shopController.companyProducts
+);
+
+shopRouter.get(
+    '/companies-by-category',
+    verifyUser,
+    authorizeRole(UserRole.SHOPKEEPER),
+    shopController.getCompaniesByCategory
 );
 
 export default shopRouter;
