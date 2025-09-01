@@ -18,7 +18,7 @@ const productRepository = new product_repository_1.MongoProductRepository();
 const getCategories = (req) => __awaiter(void 0, void 0, void 0, function* () {
     return Object.keys(constants_1.categoryMap).map((item) => ({
         key: item,
-        value: constants_1.categoryMap[item]
+        value: constants_1.categoryMap[item],
     }));
 });
 const getPopularCompanies = (req) => __awaiter(void 0, void 0, void 0, function* () {
@@ -62,8 +62,8 @@ const getCategoryProducts = (req) => __awaiter(void 0, void 0, void 0, function*
             category: constants_1.categoryMap[req.query.category],
             isDeleted: false,
             stockQuantity: {
-                $gt: 0
-            }
+                $gt: 0,
+            },
         },
         page: req.query.page ? parseInt(req.query.page, 10) : undefined,
         limit: req.query.limit ? parseInt(req.query.limit, 10) : undefined,
@@ -76,10 +76,16 @@ const getCategoryProducts = (req) => __awaiter(void 0, void 0, void 0, function*
     };
 });
 const getCompanyProducts = (req) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    let filter = {
+        companyId: req.params.id.toString(),
+        isDeleted: false,
+    };
+    if (req.query.categoryName && constants_1.categoryMap[req.query.categoryName]) {
+        filter.category = constants_1.categoryMap[req.query.categoryName];
+    }
     const { data, meta } = yield productRepository.FindMany({
         filter: {
-            companyId: ((_a = req === null || req === void 0 ? void 0 : req.params) === null || _a === void 0 ? void 0 : _a.id).toString(),
+            companyId: req.params.id.toString(),
             isDeleted: false,
         },
         page: req.query.page ? parseInt(req.query.page, 10) : undefined,
@@ -92,11 +98,17 @@ const getCompanyProducts = (req) => __awaiter(void 0, void 0, void 0, function* 
         meta,
     };
 });
+const getCompaniesByProducts = (req) => __awaiter(void 0, void 0, void 0, function* () {
+    return companyRepository.findMany({
+        filter: { category: req.query.category },
+    });
+});
 exports.default = {
     getCategories,
     getPopularCompanies,
     getDiscountedProducts,
     getAllCompanies,
     getCategoryProducts,
-    getCompanyProducts
+    getCompanyProducts,
+    getCompaniesByProducts,
 };

@@ -4,8 +4,10 @@ import bcrypt from 'bcrypt';
 import TokenService from './token.service';
 import { UserRole } from '../../Common/constants';
 import { BadRequestError } from '../../Utils/Error';
+import { ShopRepository } from '../Shop/repository/shop.repository';
 
 const userRepository = new MongoUserRepository();
+const shopRepository = new ShopRepository();
 
 const createAdmin = async (req: Request, res: Response) => {
     const { username, password } = req.body;
@@ -40,7 +42,20 @@ const login = async (req: Request, res: Response) => {
         _id: user._id.toString(),
         role: user.role,
     });
-    return { accessToken, isProfileCompleted: user.isProfileCompleted };
+
+    const data = {
+        accessToken,
+        isProfileCompleted: user.isProfileCompleted
+    }
+    if (role == UserRole.SHOPKEEPER) {
+        const shop = await shopRepository.findOne({ userId: user._id });
+        return {
+            ...data,
+            shop
+        }
+    }
+    return data;
+
 };
 
 const createShop = async (req: Request) => {

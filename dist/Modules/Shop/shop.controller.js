@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.companyProducts = exports.allCompanies = exports.categoryProducts = exports.discountedProducts = exports.popularCompanies = exports.getTopCategories = exports.updateProfilePicture = exports.getProfile = exports.completeShopDetails = void 0;
+exports.getCompaniesByCategory = exports.companyProducts = exports.allCompanies = exports.categoryProducts = exports.discountedProducts = exports.popularCompanies = exports.getTopCategories = exports.updateProfilePicture = exports.getProfile = exports.completeShopDetails = void 0;
 const shop_home_service_1 = __importDefault(require("./services/shop.home.service"));
 const shop_profile_service_1 = __importDefault(require("./services/shop.profile.service"));
 const Response_1 = require("../../Utils/Response");
@@ -41,10 +41,10 @@ exports.getProfile = getProfile;
 const updateProfilePicture = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const data = yield shop_profile_service_1.default.updateProfilePicture(req);
-        return (0, Response_1.successResponse)(res, 200, "Shop Image Updated Successfully", data);
+        return (0, Response_1.successResponse)(res, 200, 'Shop Image Updated Successfully', data);
     }
     catch (error) {
-        console.log("Error in updating profile Image", error);
+        console.log('Error in updating profile Image', error);
         next(error);
     }
 });
@@ -115,6 +115,17 @@ const companyProducts = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
     }
 });
 exports.companyProducts = companyProducts;
+const getCompaniesByCategory = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const data = yield shop_home_service_1.default.getCompaniesByProducts(req);
+        return (0, Response_1.successResponse)(res, 200, 'Companies by category fetched successfully', data);
+    }
+    catch (error) {
+        console.log('Error in getting companies by category', error);
+        next(error);
+    }
+});
+exports.getCompaniesByCategory = getCompaniesByCategory;
 exports.default = {
     completeShopDetails: exports.completeShopDetails,
     getProfile: exports.getProfile,
@@ -125,4 +136,5 @@ exports.default = {
     allCompanies: exports.allCompanies,
     categoryProducts: exports.categoryProducts,
     companyProducts: exports.companyProducts,
+    getCompaniesByCategory: exports.getCompaniesByCategory,
 };
