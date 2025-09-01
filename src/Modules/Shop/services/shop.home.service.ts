@@ -1,10 +1,9 @@
-import { categoryMap, companiesCategories } from '../../../Common/constants';
+import { categoryMap } from '../../../Common/constants';
 import { MongoCompanyRepository } from '../../Company/repository/company.repository';
 import { Request } from 'express';
 import { MongoProductRepository } from '../../Product/repository/product.repository';
 import { discountedProductsDto } from '../../Product/dto';
 import { FilterQuery } from 'mongoose';
-import { ICompanyDocument } from '../../Company/company.model';
 import { IProductDocument } from '../../Product/product.model';
 
 const companyRepository = new MongoCompanyRepository();

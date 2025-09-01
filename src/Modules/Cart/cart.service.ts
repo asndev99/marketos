@@ -30,8 +30,45 @@ const removeFromCart = async (req: Request) => {
     return await cartRepository.RemoveItemFromCart({ productId, shopId, cartId });
 };
 
+const editCart = async (req: Request) => {
+    const { operation, qty = 1, cartId } = req.body;
+    const existingItem = await cartRepository.findOne({ _id: cartId });
+
+    if (operation === 'increement') {
+        if (existingItem) {
+            return await cartRepository.findOneAndUpdate(
+                { _id: existingItem._id },
+                { qty: existingItem.qty + qty }
+            );
+        }
+        return;
+    }
+
+    if (operation === 'decreement') {
+        if (existingItem) {
+            const updatedQty = existingItem.qty - qty;
+            if (updatedQty <= 0) {
+                return await cartRepository.findOneAndDelete({ _id: existingItem._id });
+            }
+            return await cartRepository.findOneAndUpdate(
+                { _id: existingItem._id },
+                { qty: updatedQty }
+            );
+        }
+        return;
+    }
+
+    if (operation === 'set') {
+        if (existingItem) {
+            return await cartRepository.findOneAndUpdate({ _id: existingItem._id }, { qty });
+        }
+        return;
+    }
+};
+
 export default {
     addToCart,
-    getCartItems,
+    editCart,
     removeFromCart,
+    getCartItems,
 };

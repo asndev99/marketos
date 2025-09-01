@@ -22,6 +22,7 @@ shopRouter.get(
     authorizeRole(UserRole.SHOPKEEPER),
     shopController.getProfile
 );
+
 shopRouter.patch(
     '/image',
     verifyUser,
@@ -35,6 +36,7 @@ shopRouter.patch(
     ]),
     shopController.updateProfilePicture
 );
+
 shopRouter.get(
     '/top-categories',
     verifyUser,

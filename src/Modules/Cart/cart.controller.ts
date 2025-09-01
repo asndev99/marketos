@@ -33,8 +33,19 @@ const removeFromCart = async (req: Request, res: Response, next: NextFunction) =
     }
 };
 
+const editCart = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const data = await cartService.editCart(req);
+        return successResponse(res, 200, 'Cart Updated Successfully', null);
+    } catch (error) {
+        console.log('Error in editing cart', error);
+        next(error);
+    }
+};
+
 export default {
     addToCart,
+    editCart,
     getMyCart,
     removeFromCart,
 };
