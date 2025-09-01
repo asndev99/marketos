@@ -9,12 +9,12 @@ export enum UserRole {
 export enum PaymentStatus {
     PENDING = 'PENDING',
     COMPLETED = 'COMPLETED',
-    RECEIVED = 'RECEIVED'
+    RECEIVED = 'RECEIVED',
 }
 
 export enum PaymentMethod {
     CASH = 'CASH',
-    CREDIT = 'CREDIT'
+    CREDIT = 'CREDIT',
 }
 export enum OrderStatus {
     NEW = 'PENDING',
@@ -22,7 +22,7 @@ export enum OrderStatus {
     DELIVERED = 'DELIVERED',
     USER_CANCELLED = 'USER_CANCELLED',
     RECEIVED = 'RECEIVED',
-    COMPANY_CANCELLED = 'COMPANY_CANCELLED'
+    COMPANY_CANCELLED = 'COMPANY_CANCELLED',
 }
 
 export interface JwtVerifiedPayload {
@@ -49,22 +49,22 @@ export const companiesCategories = [
 ];
 
 export const categoryMap: Record<string, string> = {
-    "FVGS": 'Fruits & Vegetables',
-    "DE": 'Dairy & Eggs',
-    "MT": "Meat & Seafood",
-    "BK": "Bakery",
-    "PS": "PaintryStaples",
-    "BVGS": "Beverages",
-    "SCT": 'Snacks & Confactionery',
-    "FFDS": 'Frozen Foods',
-    "CGDS": 'Canned & Jarred Goods',
-    "PRGS": 'Pasta,Rice & Grains',
-    "CPS": 'Condiments & Spices',
-    "BRFI": "Breakfast Items",
-    "HORFS": "Health & Organic Foods",
-    "BPS": "Baby Products",
-    "PTS": "Pet Supplies"
-}
+    FVGS: 'Fruits & Vegetables',
+    DE: 'Dairy & Eggs',
+    MT: 'Meat & Seafood',
+    BK: 'Bakery',
+    PS: 'PaintryStaples',
+    BVGS: 'Beverages',
+    SCT: 'Snacks & Confactionery',
+    FFDS: 'Frozen Foods',
+    CGDS: 'Canned & Jarred Goods',
+    PRGS: 'Pasta,Rice & Grains',
+    CPS: 'Condiments & Spices',
+    BRFI: 'Breakfast Items',
+    HORFS: 'Health & Organic Foods',
+    BPS: 'Baby Products',
+    PTS: 'Pet Supplies',
+};
 
 //for valdiation purpose
 export const roles = ['ADMIN', 'COMPANY', 'RIDER', 'SHOPKEEPER', 'BOOKKEEPER'] as const;
