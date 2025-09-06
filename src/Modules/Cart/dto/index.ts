@@ -16,7 +16,6 @@ export const getCartItemsDto = (data: any): CartItemDto[] => {
               const discountPercentage = isDiscounted
                   ? ((actualPrice - priceAfterDiscount) / actualPrice) * 100
                   : 0;
-console.log("item?.producId: ", item);
               return {
                   cartId: item._id,
                   qty: item.qty,

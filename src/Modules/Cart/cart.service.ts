@@ -22,7 +22,6 @@ const getCartItems = async (req: Request) => {
             },
         },
     ]);
-    console.log("data: ", data);
     return getCartItemsDto(data);
 };
 
