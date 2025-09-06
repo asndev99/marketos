@@ -25,6 +25,7 @@ export const getCartItemsDto = (data: any): CartItemDto[] => {
                   actualPrice,
                   priceAfterDiscount,
                   productId: item.productId._id,
+                  companyId: item?.producId?.companyId,
                   productName: item.producId.name || 'No Name',
                   isDiscounted,
                   discountPercentage: parseFloat(discountPercentage.toFixed(2)),
