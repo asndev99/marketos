@@ -16,7 +16,7 @@ export const getCartItemsDto = (data: any): CartItemDto[] => {
               const discountPercentage = isDiscounted
                   ? ((actualPrice - priceAfterDiscount) / actualPrice) * 100
                   : 0;
-
+console.log("item?.producId: ", item);
               return {
                   cartId: item._id,
                   qty: item.qty,
@@ -25,8 +25,8 @@ export const getCartItemsDto = (data: any): CartItemDto[] => {
                   actualPrice,
                   priceAfterDiscount,
                   productId: item.productId._id,
-                  companyId: item?.producId?.companyId,
-                  productName: item.producId.name || 'No Name',
+                  companyId: item?.productId?.companyId,
+                  productName: item?.productId?.name || 'No Name',
                   isDiscounted,
                   discountPercentage: parseFloat(discountPercentage.toFixed(2)),
                   images: item.productId.images.map((img: any) => img?.image),

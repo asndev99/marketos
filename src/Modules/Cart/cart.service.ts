@@ -15,13 +15,14 @@ const getCartItems = async (req: Request) => {
     const data = await cartRepository.findMany({ userId: req.user._id.toString() }, {}, [
         {
             path: 'productId',
-            select: 'name price discountedPrice status',
+            select: 'name price discountedPrice status companyId',
             populate: {
                 path: 'images',
                 select: 'image',
             },
         },
     ]);
+    console.log("data: ", data);
     return getCartItemsDto(data);
 };
 
