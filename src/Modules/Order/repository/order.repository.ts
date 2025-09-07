@@ -53,6 +53,7 @@ export class MongoOrderRepository implements IOrderRepository {
         const userOrder = await UserOrderModel.aggregate([
             {
                 $match: {
+                    _id: new Types.ObjectId(payload?._id), 
                     userId: new Types.ObjectId(payload?.userId),
                 },
             },
