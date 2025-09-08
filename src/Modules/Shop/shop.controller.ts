@@ -5,8 +5,8 @@ import { successResponse } from '../../Utils/Response';
 
 export const completeShopDetails = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        await shopProfileService.completeShopDetails(req);
-        return successResponse(res, 200, 'Shop Details Completed Successfully', null);
+        const data = await shopProfileService.completeShopDetails(req);
+        return successResponse(res, 200, 'Shop Details Completed Successfully', data);
     } catch (error) {
         console.log('Error in creating shop', error);
         next(error);
