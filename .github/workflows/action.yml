@@ -1,0 +1,46 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up environment variables
+        env:
+          PORT: ${{ vars.PORT}}
+          cloud_name: ${{ vars.cloud_name }}
+          api_key: ${{ secrets.api_key }}
+          api_secret: ${{secrets.api_secret}}
+          MONGO_URI: ${{ vars.MONGO_URI }}
+          JWT_SECRET: ${{secrets.JWT_SECRET}}
+          JWT_REFRESH_SECRET: ${{secrets?.JWT_REFRESH_SECRET}}
+        run: |
+          echo "PORT=$PORT" >> $GITHUB_ENV
+          echo "cloud_name=$cloud_name" >> $GITHUB_ENV
+          echo "api_key=$api_key" >> $GITHUB_ENV
+          echo "MONGO_URI=$MONGO_URI" >> $GITHUB_ENV
+          echo "JWT_SECRET=$JWT_SECRET" >> $GITHUB_ENV
+          echo "JWT_REFRESH_SECRET=$JWT_REFRESH_SECRET" >> $GITHUB_ENV
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_PEM }}" > ~/.ssh/server_key.pem
+          chmod 600 ~/.ssh/server_key.pem
+
+      - name: Deploy on EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/server_key.pem ec2-user@54.158.11.160 << 'EOF'
+            cd MARKETOS
+            git pull origin main
+            npm install
+            pm2 restart 0
+          EOF
