@@ -272,11 +272,11 @@ const pieChart = async (req: Request, res: Response) => {
     const pending = orders.filter((order) => order.orderStatus === 'PENDING');
 
     return {
-        weeklyDeliveredOrdersPercentage: Math.round((deliveredOrders.length / orders.length) * 100),
-        weeklyCompanyCancelledPercentage: Math.round(
+        weeklyDeliveredOrdersPercentage: orders.length > 0 ? Math.round((deliveredOrders.length / orders.length) * 100) : 0,
+        weeklyCompanyCancelledPercentage: orders.length > 0 ?  Math.round(
             (companyCancelled.length / orders.length) * 100
-        ),
-        weeklyPendingPercentage: Math.round((pending.length / orders.length) * 100),
+        ) : 0,
+        weeklyPendingPercentage: orders.length > 0 ?  Math.round((pending.length / orders.length) * 100) : 0,
     };
 };
 
