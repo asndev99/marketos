@@ -41,7 +41,7 @@ jobs:
 
       - name: Deploy on EC2
         run: |
-          ssh -i ~/.ssh/server_key.pem ec2-user@13.218.39.8 << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/server_key.pem ec2-user@13.218.39.8
             cd MARKETOS || exit
             git pull origin main
             npm install
