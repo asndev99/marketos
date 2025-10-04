@@ -41,10 +41,10 @@ jobs:
 
       - name: Deploy on EC2
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/server_key.pem ec2-user@13.218.39.8
-            cd /home/ec2-user/marketos || exit
-            git pull origin main
-            npm install
-            npm run build
-            pm2 restart server || pm2 start dist/server.js --name server
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/server_key.pem ec2-user@13.218.39.8 << 'EOF'
+          cd /home/ec2-user/marketos || exit
+          git pull origin main
+          npm install
+          npm run build
+          pm2 restart server || pm2 start dist/server.js --name server
           EOF
