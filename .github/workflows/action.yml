@@ -12,16 +12,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        environment: production
 
       - name: Set up environment variables
         env:
           PORT: ${{ vars.PORT}}
-          cloud_name: ${{ vars.cloud_name }}
-          api_key: ${{ secrets.api_key }}
-          api_secret: ${{secrets.api_secret}}
+          cloud_name: ${{ vars.CLOUD_NAME }}
+          api_key: ${{ secrets.API_KEY }}
+          api_secret: ${{secrets.API_SECRET}}
           MONGO_URI: ${{ vars.MONGO_URI }}
           JWT_SECRET: ${{secrets.JWT_SECRET}}
-          JWT_REFRESH_SECRET: ${{secrets?.JWT_REFRESH_SECRET}}
+          JWT_REFRESH_SECRET: ${{secrets.JWT_REFRESH_SECRET}}
         run: |
           echo "PORT=$PORT" >> $GITHUB_ENV
           echo "cloud_name=$cloud_name" >> $GITHUB_ENV
@@ -42,5 +43,6 @@ jobs:
             cd MARKETOS
             git pull origin main
             npm install
+            npm run build
             pm2 restart 0
           EOF
