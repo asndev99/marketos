@@ -6,9 +6,9 @@ dotenv.config();
 import { v4 as uuidv4 } from 'uuid';
 
 cloudinary.config({
-    cloud_name: process.env.cloud_name as string,
-    api_key: process.env.api_key as string,
-    api_secret: process.env.api_secret as string,
+    cloud_name: process.env.CLOUD_NAME as string,
+    api_key: process.env.API_KEY as string,
+    api_secret: process.env.API_SECRET as string,
 });
 
 export const uploadBufferToCloudinary = (

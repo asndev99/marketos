@@ -34,15 +34,17 @@ jobs:
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SERVER_PEM }}" > ~/.ssh/server_key.pem
+          # Write the multi-line private key safely
+          echo "${{ secrets.SERVER_PEM }}" | tr -d '\r' > ~/.ssh/server_key.pem
           chmod 600 ~/.ssh/server_key.pem
+          ssh-keyscan -H 54.158.11.160 >> ~/.ssh/known_hosts
 
       - name: Deploy on EC2
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/server_key.pem ec2-user@54.158.11.160 << 'EOF'
-            cd MARKETOS
+          ssh -i ~/.ssh/server_key.pem ec2-user@13.218.39.8 << 'EOF'
+            cd MARKETOS || exit
             git pull origin main
             npm install
             npm run build
-            pm2 restart 0
+            pm2 restart server || pm2 start dist/server.js --name server
           EOF
