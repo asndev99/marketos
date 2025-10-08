@@ -9,13 +9,13 @@ dotenv.config();
 
 export default async (app: Application) => {
 
-    app.use(cors({
+    const corsOptions = {
         origin: "*",
+        optionsSuccessStatus: 200,
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-        allowedHeaders: ["Content-Type", "Authorization"]
-    }));
+    };
+    app.use(cors(corsOptions));
 
-    app.options('*', cors());
 
     app.use(loggerMiddleware);
     app.use(express.json());
