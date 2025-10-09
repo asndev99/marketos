@@ -10,11 +10,12 @@ dotenv.config();
 export default async (app: Application) => {
 
     const corsOptions = {
-        origin: "*",
-        optionsSuccessStatus: 200,
+        origin: ["https://marketos-web.vercel.app"],
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     };
+
     app.use(cors(corsOptions));
+    app.options("*", cors(corsOptions));
 
 
     app.use(loggerMiddleware);
