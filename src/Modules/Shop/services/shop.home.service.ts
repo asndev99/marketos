@@ -86,6 +86,7 @@ const getCompanyProducts = async (req: Request) => {
 
     const { data, meta } = await productRepository.FindMany({
         filter: {
+            ...filter,
             companyId: req.params.id.toString(),
             isDeleted: false,
         },
