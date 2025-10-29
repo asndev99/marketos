@@ -18,6 +18,7 @@ export interface ICompany {
     profileLogo: String;
     isPopular: Boolean;
     popularityRate: Number;
+    isDeleted: Boolean
 }
 
 export interface orderUpdateValidation {

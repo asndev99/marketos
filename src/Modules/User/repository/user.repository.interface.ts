@@ -7,4 +7,5 @@ export interface IUserRepository {
   findByUsername(username: string): Promise<IUser | null>;
   findById(id: string): Promise<IUser | null>;
   findOne(payload: FilterQuery<IUserDocument>): Promise<IUserDocument | null>;
+  deleteUser(id: string, userType: string): Promise<Boolean>;
 }

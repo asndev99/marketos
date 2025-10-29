@@ -20,6 +20,7 @@ const getPopularCompanies = async (req: Request) => {
     return companyRepository.findMany({
         filter: {
             isPopular: true,
+            isDeleted: false
         },
         page: req.query.page ? parseInt(req.query.page as string, 10) : undefined,
         limit: req.query.limit ? parseInt(req.query.limit as string, 10) : undefined,
@@ -47,6 +48,9 @@ const getDiscountedProducts = async (req: Request) => {
 
 const getAllCompanies = async (req: Request) => {
     return companyRepository.findMany({
+        filter: {
+            isDeleted: false
+        },
         page: req.query.page ? parseInt(req.query.page as string, 10) : undefined,
         limit: req.query.limit ? parseInt(req.query.limit as string, 10) : undefined,
         sortBy: 'popularityRate',
@@ -103,7 +107,7 @@ const getCompanyProducts = async (req: Request) => {
 
 const getCompaniesByProducts = async (req: Request) => {
     return companyRepository.findMany({
-        filter: { category: req.query.category as string },
+        filter: { category: req.query.category as string, isDeleted: false },
     });
 };
 

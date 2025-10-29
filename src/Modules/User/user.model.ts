@@ -29,6 +29,10 @@ const userSchema: Schema<IUserDocument> = new Schema({
         type: Boolean,
         default: false,
     },
+    isDeleted: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 export const UserModel = mongoose.model<IUserDocument>('User', userSchema);

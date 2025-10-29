@@ -30,7 +30,7 @@ const createCompany = async (req: Request, res: Response) => {
 
 const login = async (req: Request, res: Response) => {
     const { username, password, role } = req.body;
-    const user = await userRepository.findOne({ username, role });
+    const user = await userRepository.findOne({ username, role, isDeleted: false });
     if (!user) {
         throw new BadRequestError('Invalid Credentials');
     }
@@ -81,10 +81,16 @@ const validateUsername = async (req: Request) => {
     return;
 };
 
+const deleteAccount = async (req: Request) => {
+    await userRepository.deleteUser(req?.user?._id.toString(), req?.user?.role);
+    return true;
+}
+
 export default {
     createAdmin,
     createCompany,
     login,
     createShop,
     validateUsername,
+    deleteAccount
 };

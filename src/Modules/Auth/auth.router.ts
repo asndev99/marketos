@@ -5,6 +5,7 @@ import authController from './auth.controller';
 import { createCompanySchema } from './validation/createCompanySchema';
 import { login, validateUserNameSchema } from './validation/common';
 import { createShopSchema } from './validation/createShopSchema';
+import { verifyUser } from '../../Middlewares/auth.middleware';
 
 const authRouter = Router();
 
@@ -24,7 +25,8 @@ authRouter.post('/create-shop', validateSchema(createShopSchema), authController
 
 //GENERALIZED ROUTES
 authRouter.post('/login', validateSchema(login), authController.login);
-
+authRouter.delete('/delete', verifyUser, authController.deleteUser);
+ 
 authRouter.post(
     '/validate-username',
     validateSchema(validateUserNameSchema),

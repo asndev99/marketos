@@ -34,6 +34,16 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
+const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const data = await authService.deleteAccount(req);
+        return successResponse(res, 200, 'Account Deleted Successfully', data);
+    } catch (error) {
+        console.log('Error in logging in', error);
+        next(error);
+    }
+};
+
 //NOT IN USER FOR NOW
 const createShop = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -60,4 +70,5 @@ export default {
     createCompany,
     createShop,
     validateUsername,
+    deleteUser
 };

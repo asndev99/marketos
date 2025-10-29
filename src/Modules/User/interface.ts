@@ -9,4 +9,5 @@ export interface IUser {
     role: UserRole;
     isNotificationsEnabled: boolean;
     isProfileCompleted: boolean;
+    isDeleted: boolean
 }
