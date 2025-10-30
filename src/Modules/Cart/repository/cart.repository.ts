@@ -11,15 +11,24 @@ export class MongoCartRepository implements ICartRepository {
         userId: string;
         productId: string;
         shopId: string;
-    }): Promise<ICartDocument> {
-        const { productId, userId, shopId } = payload;
+        quantity: number;
+    }): Promise<ICartDocument | null> {
+        const { productId, userId, shopId, quantity } = payload;
 
         const existingItem = await this.findOne({ shopId, productId, userId });
+
+        if (existingItem && quantity == 0) {
+            return this.RemoveItemFromCart({
+                productId,
+                cartId: existingItem._id.toString(),
+                shopId,
+            });
+        }
 
         if (existingItem) {
             const updated = await this.findOneAndUpdate(
                 { _id: existingItem._id },
-                { qty: existingItem.qty + 1 }
+                { qty: quantity }
             );
             if (!updated) {
                 throw new Error('Failed to update cart item');
@@ -27,7 +36,7 @@ export class MongoCartRepository implements ICartRepository {
             return updated;
         }
 
-        return this.create({ userId, productId, shopId, qty: 1 } as any);
+        return this.create({ userId, productId, shopId, qty: quantity } as any);
     }
 
     async findOne(
@@ -35,6 +44,7 @@ export class MongoCartRepository implements ICartRepository {
         exclude: Record<string, 0 | 1> = {},
         populate?: string | string[] | PopulateOptions | PopulateOptions[]
     ): Promise<ICartDocument | null> {
+        console.log(payload, 'payload');
         let query = CartModel.findOne(payload).select(exclude);
 
         if (populate) {

@@ -6,7 +6,7 @@ export interface ICartRepository {
         userId: string;
         productId: string;
         shopId: string;
-    }): Promise<ICartDocument>;
+    }): Promise<ICartDocument | null>;
 
     create(payload: FilterQuery<ICartDocument>): Promise<ICartDocument>;
 

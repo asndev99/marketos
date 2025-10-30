@@ -7,8 +7,13 @@ const cartRepository = new MongoCartRepository();
 const productRepository = new MongoProductRepository();
 
 const addToCart = async (req: Request) => {
-    const { shopId, productId } = req.body;
-    return cartRepository.addToCart({ shopId, productId, userId: req.user._id.toString() });
+    const { shopId, productId, quantity } = req.body;
+    return cartRepository.addToCart({
+        shopId,
+        productId,
+        userId: req.user._id.toString(),
+        quantity,
+    });
 };
 
 const getCartItems = async (req: Request) => {
@@ -34,6 +39,7 @@ const editCart = async (req: Request) => {
     const { operation, qty = 1, cartId } = req.body;
     const existingItem = await cartRepository.findOne({ _id: cartId });
 
+    console.log(existingItem, 'existingItem');
     if (operation === 'increement') {
         if (existingItem) {
             return await cartRepository.findOneAndUpdate(
@@ -45,6 +51,9 @@ const editCart = async (req: Request) => {
     }
 
     if (operation === 'decreement') {
+        if (qty == 0 && existingItem) {
+            return await cartRepository.findOneAndDelete({ _id: existingItem._id });
+        }
         if (existingItem) {
             const updatedQty = existingItem.qty - qty;
             if (updatedQty <= 0) {
