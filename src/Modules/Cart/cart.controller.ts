@@ -6,7 +6,7 @@ import { successResponse } from '../../Utils/Response';
 const addToCart = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const data = await cartService.addToCart(req);
-        return successResponse(res, 200, 'Item Added To Cart Successfully', null);
+        return successResponse(res, 200, 'Cart Updated Successfully', data);
     } catch (error) {
         console.log('Error in add to cart', error);
         next(error);
@@ -23,29 +23,29 @@ const getMyCart = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
-const removeFromCart = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        await cartService.removeFromCart(req);
-        return successResponse(res, 200, 'Cart Removed From Cart Successfully', null);
-    } catch (error) {
-        console.log('Error in removing from cart');
-        next(error);
-    }
-};
+// const removeFromCart = async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         await cartService.removeFromCart(req);
+//         return successResponse(res, 200, 'Cart Removed From Cart Successfully', null);
+//     } catch (error) {
+//         console.log('Error in removing from cart');
+//         next(error);
+//     }
+// };
 
-const editCart = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const data = await cartService.editCart(req);
-        return successResponse(res, 200, 'Cart Updated Successfully', null);
-    } catch (error) {
-        console.log('Error in editing cart', error);
-        next(error);
-    }
-};
+// const editCart = async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         const data = await cartService.editCart(req);
+//         return successResponse(res, 200, 'Cart Updated Successfully', null);
+//     } catch (error) {
+//         console.log('Error in editing cart', error);
+//         next(error);
+//     }
+// };
 
 export default {
     addToCart,
-    editCart,
     getMyCart,
-    removeFromCart,
+    // editCart,
+    // removeFromCart,
 };

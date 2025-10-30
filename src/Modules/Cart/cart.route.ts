@@ -9,19 +9,19 @@ import { addToCartSchema } from './validation/addToCartSchema';
 import { removeItemFromCart } from './validation/removeItemFromCartSchema';
 import { updateCartSchema } from './validation/updateCartSchema';
 
-cartRouter.post('/', verifyUser, validateSchema(addToCartSchema), cartController.addToCart);
+cartRouter.post('/update-cart', verifyUser, validateSchema(addToCartSchema), cartController.addToCart);
 cartRouter.get('/', verifyUser, cartController.getMyCart);
-cartRouter.patch(
-    '/update-cart',
-    verifyUser,
-    validateSchema(updateCartSchema),
-    cartController.editCart
-);
-cartRouter.patch(
-    '/',
-    verifyUser,
-    validateSchema(removeItemFromCart),
-    cartController.removeFromCart
-);
+// cartRouter.patch(
+//     '/update-cart',
+//     verifyUser,
+//     validateSchema(updateCartSchema),
+//     cartController.editCart
+// );
+// cartRouter.patch(
+//     '/',
+//     verifyUser,
+//     validateSchema(removeItemFromCart),
+//     cartController.removeFromCart
+// );
 
 export default cartRouter;

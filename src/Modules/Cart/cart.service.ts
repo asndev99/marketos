@@ -1,10 +1,10 @@
 import { Request } from 'express';
 import { MongoCartRepository } from './repository/cart.repository';
-import { MongoProductRepository } from '../Product/repository/product.repository';
+// import { MongoProductRepository } from '../Product/repository/product.repository';
 import { getCartItemsDto } from './dto';
 
 const cartRepository = new MongoCartRepository();
-const productRepository = new MongoProductRepository();
+// const productRepository = new MongoProductRepository();
 
 const addToCart = async (req: Request) => {
     const { shopId, productId, quantity } = req.body;
@@ -30,54 +30,54 @@ const getCartItems = async (req: Request) => {
     return getCartItemsDto(data);
 };
 
-const removeFromCart = async (req: Request) => {
-    const { productId, shopId, cartId } = req.body;
-    return await cartRepository.RemoveItemFromCart({ productId, shopId, cartId });
-};
+// const removeFromCart = async (req: Request) => {
+//     const { productId, shopId, cartId } = req.body;
+//     return await cartRepository.RemoveItemFromCart({ productId, shopId, cartId });
+// };
 
-const editCart = async (req: Request) => {
-    const { operation, qty = 1, cartId } = req.body;
-    const existingItem = await cartRepository.findOne({ _id: cartId });
+// const editCart = async (req: Request) => {
+//     const { operation, qty = 1, cartId } = req.body;
+//     const existingItem = await cartRepository.findOne({ _id: cartId });
 
-    console.log(existingItem, 'existingItem');
-    if (operation === 'increement') {
-        if (existingItem) {
-            return await cartRepository.findOneAndUpdate(
-                { _id: existingItem._id },
-                { qty: existingItem.qty + qty }
-            );
-        }
-        return;
-    }
+//     console.log(existingItem, 'existingItem');
+//     if (operation === 'increement') {
+//         if (existingItem) {
+//             return await cartRepository.findOneAndUpdate(
+//                 { _id: existingItem._id },
+//                 { qty: existingItem.qty + qty }
+//             );
+//         }
+//         return;
+//     }
 
-    if (operation === 'decreement') {
-        if (qty == 0 && existingItem) {
-            return await cartRepository.findOneAndDelete({ _id: existingItem._id });
-        }
-        if (existingItem) {
-            const updatedQty = existingItem.qty - qty;
-            if (updatedQty <= 0) {
-                return await cartRepository.findOneAndDelete({ _id: existingItem._id });
-            }
-            return await cartRepository.findOneAndUpdate(
-                { _id: existingItem._id },
-                { qty: updatedQty }
-            );
-        }
-        return;
-    }
+//     if (operation === 'decreement') {
+//         if (qty == 0 && existingItem) {
+//             return await cartRepository.findOneAndDelete({ _id: existingItem._id });
+//         }
+//         if (existingItem) {
+//             const updatedQty = existingItem.qty - qty;
+//             if (updatedQty <= 0) {
+//                 return await cartRepository.findOneAndDelete({ _id: existingItem._id });
+//             }
+//             return await cartRepository.findOneAndUpdate(
+//                 { _id: existingItem._id },
+//                 { qty: updatedQty }
+//             );
+//         }
+//         return;
+//     }
 
-    if (operation === 'set') {
-        if (existingItem) {
-            return await cartRepository.findOneAndUpdate({ _id: existingItem._id }, { qty });
-        }
-        return;
-    }
-};
+//     if (operation === 'set') {
+//         if (existingItem) {
+//             return await cartRepository.findOneAndUpdate({ _id: existingItem._id }, { qty });
+//         }
+//         return;
+//     }
+// };
 
 export default {
     addToCart,
-    editCart,
-    removeFromCart,
+    // editCart,
+    // removeFromCart,
     getCartItems,
 };
