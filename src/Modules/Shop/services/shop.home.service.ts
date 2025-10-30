@@ -111,6 +111,16 @@ const getCompaniesByProducts = async (req: Request) => {
     });
 };
 
+const similarProducts = async (req: Request) => {
+    const sameCategoryProducts = await getCategoryProducts(req);
+    const sameCompanyProducts = await getCompanyProducts(req);
+
+    return {
+        sameCategoryProducts,
+        sameCompanyProducts
+    }
+}
+
 export default {
     getCategories,
     getPopularCompanies,
@@ -119,4 +129,5 @@ export default {
     getCategoryProducts,
     getCompanyProducts,
     getCompaniesByProducts,
+    similarProducts
 };

@@ -103,6 +103,16 @@ export const getCompaniesByCategory = async (req: Request, res: Response, next: 
     }
 };
 
+export const similarProducts = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const data = await shopHomeService.similarProducts(req);
+        return successResponse(res, 200, 'Similar Products Fetched Successfully', data);
+    } catch (error) {
+        console.log('Error in getting discounted Products');
+        next(error);
+    }
+};
+
 export default {
     completeShopDetails,
     getProfile,
@@ -114,4 +124,5 @@ export default {
     categoryProducts,
     companyProducts,
     getCompaniesByCategory,
+    similarProducts
 };

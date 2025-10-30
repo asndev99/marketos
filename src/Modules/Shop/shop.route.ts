@@ -86,4 +86,11 @@ shopRouter.get(
     shopController.getCompaniesByCategory
 );
 
+shopRouter.get(
+    '/similar-products/:id',
+    verifyUser,
+    authorizeRole(UserRole.SHOPKEEPER),
+    shopController.similarProducts
+);
+
 export default shopRouter;
