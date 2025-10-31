@@ -106,7 +106,7 @@ const getCompanyProducts = async (req: Request) => {
 };
 
 const getCompaniesByProducts = async (req: Request) => {
-    const mappedCategory = categoryMap[req.query.categoryName as string];
+    const mappedCategory = categoryMap[req.query.category as string];
     return companyRepository.findMany({
         filter: { category: { $in: [mappedCategory] }, isDeleted: false },
     });
