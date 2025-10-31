@@ -29,8 +29,8 @@ companyRouter.patch(
 companyRouter.get('/', verifyUser, authorizeRole(UserRole.COMPANY), companyController.getProfile);
 companyRouter.get('/order', verifyUser, authorizeRole(UserRole.COMPANY), companyController.getOrders);
 companyRouter.get('/order/:id', verifyUser, authorizeRole(UserRole.COMPANY), companyController.getOrder);
-companyRouter.patch('/update-order/', verifyUser, authorizeRole(UserRole.COMPANY), companyController.updateOrder);
-companyRouter.patch('/update-payment/', verifyUser, authorizeRole(UserRole.COMPANY), companyController.updateOrderPayment);
+companyRouter.patch('/update-order', verifyUser, authorizeRole(UserRole.COMPANY), companyController.updateOrder);
+companyRouter.patch('/update-payment', verifyUser, authorizeRole(UserRole.COMPANY), companyController.updateOrderPayment);
 companyRouter.get('/order-analytics', verifyUser, authorizeRole(UserRole.COMPANY), companyController.orderAnalytics);
 companyRouter.get('/income-analytics', verifyUser, authorizeRole(UserRole.COMPANY), companyController.incomeAnalytics);
 companyRouter.get('/order-percent', verifyUser, authorizeRole(UserRole.COMPANY), companyController.orderPercentageAnalytics);

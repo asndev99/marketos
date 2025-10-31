@@ -60,7 +60,7 @@ const getProduct = async (req: Request, res: Response) => {
     if (!companyDetails) {
         throw new BadRequestError('Company Not Found');
     }
-    const data = await productRepository.findOneProduct({ _id: id });
+    const data = await productRepository.findOneProduct({ _id: id, companyId: companyDetails?._id });
     if (!data) throw new NotFoundError('Product not found !');
 
     return data;
