@@ -69,7 +69,7 @@ export class MongoCartRepository implements ICartRepository {
         let query = CartModel.findOne(payload).select(exclude);
 
         if (populate) {
-            query = query.populate(populate as any);
+            query = query.populate(populate as PopulateOptions | (string | PopulateOptions)[]);
         }
 
         return query;
