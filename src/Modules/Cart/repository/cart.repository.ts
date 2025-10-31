@@ -18,11 +18,12 @@ export class MongoCartRepository implements ICartRepository {
         const existingItem = await this.findOne({ shopId, productId, userId });
 
         if (existingItem && quantity == 0) {
-            return this.RemoveItemFromCart({
+            const deletedRecord = await this.RemoveItemFromCart({
                 productId,
                 cartId: existingItem._id.toString(),
                 shopId,
             });
+            return null;
         }
 
         if (existingItem) {
@@ -36,7 +37,7 @@ export class MongoCartRepository implements ICartRepository {
             const updatedItem = await this.findOne({ shopId, productId, userId }, {}, [
                 {
                     path: 'productId',
-                    select: 'name price discountedPrice status companyId',
+                    select: 'name price discountedPrice status companyId stockQuantity',
                     populate: {
                         path: 'images',
                         select: 'image',
@@ -50,7 +51,7 @@ export class MongoCartRepository implements ICartRepository {
         const createdItem = await this.findOne({ _id: newCreated?._id }, {}, [
             {
                 path: 'productId',
-                select: 'name price discountedPrice status companyId',
+                select: 'name price discountedPrice status companyId stockQuantity',
                 populate: {
                     path: 'images',
                     select: 'image',
@@ -65,7 +66,6 @@ export class MongoCartRepository implements ICartRepository {
         exclude: Record<string, 0 | 1> = {},
         populate?: string | string[] | PopulateOptions | PopulateOptions[]
     ): Promise<ICartDocument | null> {
-        console.log(payload, 'payload');
         let query = CartModel.findOne(payload).select(exclude);
 
         if (populate) {
@@ -140,14 +140,7 @@ export class MongoCartRepository implements ICartRepository {
         });
 
         if (!existingItem) return null;
-
-        const newQty = existingItem.qty - 1;
-
-        if (newQty <= 0) {
             return this.findOneAndDelete({ _id: existingItem._id });
-        } else {
-            return this.findOneAndUpdate({ _id: existingItem._id }, { qty: newQty });
-        }
     }
 
     async RemoveProductFromCart(options: {
