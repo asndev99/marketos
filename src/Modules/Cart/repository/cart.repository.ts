@@ -33,10 +33,31 @@ export class MongoCartRepository implements ICartRepository {
             if (!updated) {
                 throw new Error('Failed to update cart item');
             }
-            return updated;
+            const updatedItem = await this.findOne({ shopId, productId, userId }, {}, [
+                {
+                    path: 'productId',
+                    select: 'name price discountedPrice status companyId',
+                    populate: {
+                        path: 'images',
+                        select: 'image',
+                    },
+                },
+            ]);
+            return updatedItem;
         }
 
-        return this.create({ userId, productId, shopId, qty: quantity } as any);
+        const newCreated = await this.create({ userId, productId, shopId, qty: quantity } as any);
+        const createdItem = await this.findOne({ _id: newCreated?._id }, {}, [
+            {
+                path: 'productId',
+                select: 'name price discountedPrice status companyId',
+                populate: {
+                    path: 'images',
+                    select: 'image',
+                },
+            },
+        ]);
+        return createdItem;
     }
 
     async findOne(
