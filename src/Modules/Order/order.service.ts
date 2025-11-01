@@ -115,7 +115,7 @@ const orderPlacement = async (req: Request, res: Response, session: ClientSessio
 
 const allOrders = async (req: Request, res: Response) => {
     const myOrders = await orderRepository.allOrders({ userId: req?.user?._id });
-    return myOrders.map((order) => {
+    return (myOrders.map((order) => {
         let totalItems: number = 0;
         let totalPrice: number = 0;
         order?.orderProducts?.map((product) => {
@@ -134,7 +134,7 @@ const allOrders = async (req: Request, res: Response) => {
             userId: order?.userId,
             noOfItems: totalItems,
         };
-    });
+    })).reverse();
 };
 
 const fetchSingleorder = async (req: Request, res: Response) => {
