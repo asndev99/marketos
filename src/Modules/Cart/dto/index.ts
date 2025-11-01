@@ -16,7 +16,7 @@ export const getCartItemsDto = (data: any, isSingleObject: boolean): CartItemDto
               const priceAfterDiscount = discountedPricePerItem * item.qty;
 
               const discountPercentage = isDiscounted
-                  ? ((actualPrice - priceAfterDiscount) / actualPrice) * 100
+                  ? Math.floor( ( ((actualPrice - priceAfterDiscount) / actualPrice) * 100 ) * 10) / 10
                   : 0;
               return {
                   cartId: item._id,
