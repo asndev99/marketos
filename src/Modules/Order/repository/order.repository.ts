@@ -280,7 +280,7 @@ export class MongoOrderRepository implements IOrderRepository {
     async orderUpdateForCompany(payload: orderUpdateValidation[]): Promise<Boolean> {
         const operations = payload.map((item: orderUpdateValidation) => ({
             updateOne: {
-                filter: { _id: item?.id },
+                filter: { _id: item?.orderId },
                 update: {
                     $set: {
                         orderStatus: item?.status,
@@ -293,7 +293,7 @@ export class MongoOrderRepository implements IOrderRepository {
         }));
         const operationsPayment = payload.map((item: orderUpdateValidation) => ({
             updateOne: {
-                filter: { orderProductId: item?.id },
+                filter: { orderProductId: item?.orderId },
                 update: {
                     $set: {
                         amount: item?.price,
@@ -309,7 +309,7 @@ export class MongoOrderRepository implements IOrderRepository {
     async paymentUpdateForCompanyOrder(payload: orderUpdateValidation[]): Promise<Boolean> {
         const operationsPayment = payload.map((item: orderUpdateValidation) => ({
             updateOne: {
-                filter: { _id: item?.id },
+                filter: { _id: item?.orderId },
                 update: {
                     $set: {
                         paymentStatus: item?.status,

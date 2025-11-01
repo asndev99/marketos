@@ -22,7 +22,7 @@ export interface ICompany {
 }
 
 export interface orderUpdateValidation {
-    id: Types.ObjectId;
+    orderId: Types.ObjectId;
     quantity: number;
     status: string,
     price: number
