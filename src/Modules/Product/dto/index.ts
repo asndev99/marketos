@@ -4,7 +4,8 @@ import { categoryMap } from '../../../Common/constants';
 // Discount Percentage = (Discount Amount / Original Price) * 100
 export const discountedProductsDto = (data: any[]) => {
     return data.length
-        ? data.map((item: IProductPopulatedDocument) => {
+        ? data.filter( (item) => ["ACTIVE", "DISCOUNTED"].includes(item.status))
+        .map((item: IProductPopulatedDocument) => {
               return {
                   ...item,
                   discountPercentage: item.discountedPrice !== null ? Math.floor( ( ( (item?.price - item.discountedPrice) / item.price ) * 100) * 10) / 10 : 0,

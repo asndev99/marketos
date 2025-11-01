@@ -27,6 +27,8 @@ const orderSummary = async (req: Request, res: Response) => {
         orderDetails.map(async (data: any) => {
             const product = await productRepository.findOneProduct({ _id: data?.productId });
             if (!product) throw new NotFoundError('Product not found !');
+            if (product?.status === 'INACTIVE' || product?.isDeleted)
+                throw new BadRequestError(`${product.name} is no longer available`);
 
             const itemTotal =
                 product?.discountedPrice !== null
@@ -115,26 +117,28 @@ const orderPlacement = async (req: Request, res: Response, session: ClientSessio
 
 const allOrders = async (req: Request, res: Response) => {
     const myOrders = await orderRepository.allOrders({ userId: req?.user?._id });
-    return (myOrders.map((order) => {
-        let totalItems: number = 0;
-        let totalPrice: number = 0;
-        order?.orderProducts?.map((product) => {
-            // totalItems = totalItems + product?.deliveredQuantity!;
-            totalItems += 1;
-            totalPrice = totalPrice + product?.finalPrice;
-        });
-        return {
-            _id: order?._id,
-            orderTime: order?.orderTime,
-            orderTimeEpoch: order?.orderTimeEpoch,
-            // totalPrice: order?.totalPrice,
-            totalPrice: totalPrice,
-            trackingNumber: order?.trackingNumber,
-            orderID: order?.orderID,
-            userId: order?.userId,
-            noOfItems: totalItems,
-        };
-    })).reverse();
+    return myOrders
+        .map((order) => {
+            let totalItems: number = 0;
+            let totalPrice: number = 0;
+            order?.orderProducts?.map((product) => {
+                // totalItems = totalItems + product?.deliveredQuantity!;
+                totalItems += 1;
+                totalPrice = totalPrice + product?.finalPrice;
+            });
+            return {
+                _id: order?._id,
+                orderTime: order?.orderTime,
+                orderTimeEpoch: order?.orderTimeEpoch,
+                // totalPrice: order?.totalPrice,
+                totalPrice: totalPrice,
+                trackingNumber: order?.trackingNumber,
+                orderID: order?.orderID,
+                userId: order?.userId,
+                noOfItems: totalItems,
+            };
+        })
+        .reverse();
 };
 
 const fetchSingleorder = async (req: Request, res: Response) => {
@@ -229,5 +233,5 @@ export default {
     fetchSingleorder,
     pieAnalytics,
     updateOrderStatus,
-    updateOrderPaymentStatus
+    updateOrderPaymentStatus,
 };
