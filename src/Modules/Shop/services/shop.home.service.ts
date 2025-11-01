@@ -32,7 +32,8 @@ const getPopularCompanies = async (req: Request) => {
 const getDiscountedProducts = async (req: Request) => {
     const { data, meta } = await productRepository.FindMany({
         filter: {
-            status: 'DISCOUNTED',
+            // status: 'DISCOUNTED',
+            discountedPrice: { $ne: null },
             isDeleted: false,
         },
         page: req.query.page ? parseInt(req.query.page as string, 10) : undefined,
