@@ -23,10 +23,9 @@ export interface ICartRepository {
         updateOptions: Partial<ICartDocument>
     ): Promise<ICartDocument | null>;
 
-    RemoveItemFromCart(options: {
+    RemoveProductFromCart(options: {
         productId: string;
-        cartId: string;
-        shopId: string;
+        userId: string;
     }): Promise<ICartDocument | null>;
 
     findMany(

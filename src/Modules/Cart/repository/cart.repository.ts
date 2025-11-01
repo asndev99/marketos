@@ -1,4 +1,4 @@
-import { FilterQuery, PopulateOptions, ClientSession } from 'mongoose';
+import { FilterQuery, PopulateOptions, ClientSession, QueryOptions } from 'mongoose';
 import { CartModel, ICartDocument } from '../cart.model';
 import { ICartRepository } from './interface';
 
@@ -13,52 +13,74 @@ export class MongoCartRepository implements ICartRepository {
         shopId: string;
         quantity: number;
     }): Promise<ICartDocument | null> {
-        const { productId, userId, shopId, quantity } = payload;
+        // const { productId, userId, shopId, quantity } = payload;
 
-        const existingItem = await this.findOne({ shopId, productId, userId });
+        // const existingItem = await this.findOne({ shopId, productId, userId });
 
-        if (existingItem && quantity == 0) {
-            const deletedRecord = await this.RemoveItemFromCart({
-                productId,
-                cartId: existingItem._id.toString(),
-                shopId,
-            });
+        // if (existingItem && quantity == 0) {
+        //     await this.RemoveProductFromCart({
+        //         productId,
+        //         userId,
+        //     });
+        //     return null;
+        // }
+
+        // if (existingItem) {
+        //     const updated = await this.findOneAndUpdate(
+        //         { _id: existingItem._id },
+        //         { qty: quantity }
+        //     );
+        //     if (!updated) {
+        //         throw new Error('Failed to update cart item');
+        //     }
+        //     const updatedItem = await this.findOne({ shopId, productId, userId }, {}, [
+        //         {
+        //             path: 'productId',
+        //             select: 'name price discountedPrice status companyId stockQuantity',
+        //             populate: {
+        //                 path: 'images',
+        //                 select: 'image',
+        //             },
+        //         },
+        //     ]);
+        //     return updatedItem;
+        // }
+
+        // const newCreated = await this.create({ userId, productId, shopId, qty: quantity } as any);
+        // const createdItem = await this.findOne({ _id: newCreated?._id }, {}, [
+        //     {
+        //         path: 'productId',
+        //         select: 'name price discountedPrice status companyId stockQuantity',
+        //         populate: {
+        //             path: 'images',
+        //             select: 'image',
+        //         },
+        //     },
+        // ]);
+        // return createdItem;
+
+        const { userId, productId, shopId, quantity } = payload;
+
+        // 🧹 If quantity = 0, remove the item if it exists
+        if (quantity === 0) {
+            await this.RemoveProductFromCart({ productId, userId });
             return null;
         }
 
-        if (existingItem) {
-            const updated = await this.findOneAndUpdate(
-                { _id: existingItem._id },
-                { qty: quantity }
-            );
-            if (!updated) {
-                throw new Error('Failed to update cart item');
-            }
-            const updatedItem = await this.findOne({ shopId, productId, userId }, {}, [
-                {
-                    path: 'productId',
-                    select: 'name price discountedPrice status companyId stockQuantity',
-                    populate: {
-                        path: 'images',
-                        select: 'image',
-                    },
-                },
-            ]);
-            return updatedItem;
-        }
-
-        const newCreated = await this.create({ userId, productId, shopId, qty: quantity } as any);
-        const createdItem = await this.findOne({ _id: newCreated?._id }, {}, [
+        const updatedOrCreatedItem = await this.findOneAndUpdate(
+            { userId, productId, shopId },
             {
-                path: 'productId',
-                select: 'name price discountedPrice status companyId stockQuantity',
-                populate: {
-                    path: 'images',
-                    select: 'image',
-                },
+                $set: { qty: quantity },
+                $setOnInsert: { userId, productId, shopId },
             },
-        ]);
-        return createdItem;
+            { new: true, upsert: true }
+        ).populate({
+            path: 'productId',
+            select: 'name price discountedPrice status companyId stockQuantity',
+            populate: { path: 'images', select: 'image' },
+        }).lean() as ICartDocument | null;
+
+        return updatedOrCreatedItem;
     }
 
     async findOne(
@@ -121,26 +143,22 @@ export class MongoCartRepository implements ICartRepository {
         return CartModel.findOneAndDelete(options);
     }
 
-    async findOneAndUpdate(
+    // async findOneAndUpdate(
+    //     whereOptions: FilterQuery<ICartDocument>,
+    //     updateOptions: Partial<ICartDocument>
+    // ): Promise<ICartDocument | null> {
+    //     return CartModel.findOneAndUpdate(whereOptions, updateOptions, { new: true });
+    // }
+
+    findOneAndUpdate(
         whereOptions: FilterQuery<ICartDocument>,
-        updateOptions: Partial<ICartDocument>
-    ): Promise<ICartDocument | null> {
-        return CartModel.findOneAndUpdate(whereOptions, updateOptions, { new: true });
-    }
-
-    async RemoveItemFromCart(options: {
-        productId: string;
-        cartId: string;
-        shopId: string;
-    }): Promise<ICartDocument | null> {
-        const existingItem = await this.findOne({
-            _id: options.cartId,
-            productId: options.productId,
-            shopId: options.shopId,
+        updateOptions: Partial<ICartDocument> | any,
+        options: QueryOptions = {}
+    ) {
+        return CartModel.findOneAndUpdate(whereOptions, updateOptions, {
+            new: true,
+            ...options,
         });
-
-        if (!existingItem) return null;
-            return this.findOneAndDelete({ _id: existingItem._id });
     }
 
     async RemoveProductFromCart(options: {
