@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { MongoCartRepository } from './repository/cart.repository';
-import { getCartItemsDto, getCartItemDto } from './dto';
+import { getCartItemsDto } from './dto';
 
 const cartRepository = new MongoCartRepository();
 
@@ -13,7 +13,7 @@ const addToCart = async (req: Request) => {
         quantity,
     });
     if(data!==null){
-        return getCartItemDto(data);
+        return getCartItemsDto(data, true);
     }else {
         return null;
     }
@@ -30,7 +30,7 @@ const getCartItems = async (req: Request) => {
             },
         },
     ]);
-    return getCartItemsDto(data)
+    return getCartItemsDto(data, false);
 };
 
 export default {

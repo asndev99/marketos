@@ -119,7 +119,8 @@ const allOrders = async (req: Request, res: Response) => {
         let totalItems: number = 0;
         let totalPrice: number = 0;
         order?.orderProducts?.map((product) => {
-            totalItems = totalItems + product?.deliveredQuantity!;
+            // totalItems = totalItems + product?.deliveredQuantity!;
+            totalItems += 1;
             totalPrice = totalPrice + product?.finalPrice;
         });
         return {

@@ -1,7 +1,8 @@
 import { CartItemDto } from '../interface';
 
-export const getCartItemsDto = (data: any): CartItemDto[] => {
-    return data.length
+export const getCartItemsDto = (data: any, isSingleObject: boolean): CartItemDto[] => {
+    const response = isSingleObject ? getCartItemDto(data) :
+    data.length
         ? data.map((item: any) => {
               const isDiscounted = item.productId.status === 'DISCOUNTED';
 
@@ -33,9 +34,11 @@ export const getCartItemsDto = (data: any): CartItemDto[] => {
               };
           })
         : [];
+
+        return response;
 };
 
-export const getCartItemDto = (item: any): any => {
+const getCartItemDto = (item: any): any => {
     const isDiscounted = item.productId.status === 'DISCOUNTED';
 
     const originalPricePerItem = item.productId.price;
