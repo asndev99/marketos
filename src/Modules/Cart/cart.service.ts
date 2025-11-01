@@ -12,7 +12,6 @@ const addToCart = async (req: Request) => {
         userId: req.user._id.toString(),
         quantity,
     });
-    console.log("data: ", data);
     if(data!==null){
         return getCartItemsDto(data, true);
     }else {

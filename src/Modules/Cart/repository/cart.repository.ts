@@ -13,72 +13,27 @@ export class MongoCartRepository implements ICartRepository {
         shopId: string;
         quantity: number;
     }): Promise<ICartDocument | null> {
-        // const { productId, userId, shopId, quantity } = payload;
-
-        // const existingItem = await this.findOne({ shopId, productId, userId });
-
-        // if (existingItem && quantity == 0) {
-        //     await this.RemoveProductFromCart({
-        //         productId,
-        //         userId,
-        //     });
-        //     return null;
-        // }
-
-        // if (existingItem) {
-        //     const updated = await this.findOneAndUpdate(
-        //         { _id: existingItem._id },
-        //         { qty: quantity }
-        //     );
-        //     if (!updated) {
-        //         throw new Error('Failed to update cart item');
-        //     }
-        //     const updatedItem = await this.findOne({ shopId, productId, userId }, {}, [
-        //         {
-        //             path: 'productId',
-        //             select: 'name price discountedPrice status companyId stockQuantity',
-        //             populate: {
-        //                 path: 'images',
-        //                 select: 'image',
-        //             },
-        //         },
-        //     ]);
-        //     return updatedItem;
-        // }
-
-        // const newCreated = await this.create({ userId, productId, shopId, qty: quantity } as any);
-        // const createdItem = await this.findOne({ _id: newCreated?._id }, {}, [
-        //     {
-        //         path: 'productId',
-        //         select: 'name price discountedPrice status companyId stockQuantity',
-        //         populate: {
-        //             path: 'images',
-        //             select: 'image',
-        //         },
-        //     },
-        // ]);
-        // return createdItem;
-
         const { userId, productId, shopId, quantity } = payload;
 
-        // 🧹 If quantity = 0, remove the item if it exists
         if (quantity === 0) {
             await this.RemoveProductFromCart({ productId, userId });
             return null;
         }
 
-        const updatedOrCreatedItem = await this.findOneAndUpdate(
+        const updatedOrCreatedItem = (await this.findOneAndUpdate(
             { userId, productId, shopId },
             {
                 $set: { qty: quantity },
                 $setOnInsert: { userId, productId, shopId },
             },
             { new: true, upsert: true }
-        ).populate({
-            path: 'productId',
-            select: 'name price discountedPrice status companyId stockQuantity',
-            populate: { path: 'images', select: 'image' },
-        }).lean() as ICartDocument | null;
+        )
+            .populate({
+                path: 'productId',
+                select: 'name price discountedPrice status companyId stockQuantity',
+                populate: { path: 'images', select: 'image' },
+            })
+            .lean()) as ICartDocument | null;
 
         return updatedOrCreatedItem;
     }
@@ -142,13 +97,6 @@ export class MongoCartRepository implements ICartRepository {
     async findOneAndDelete(options: FilterQuery<ICartDocument>): Promise<ICartDocument | null> {
         return CartModel.findOneAndDelete(options);
     }
-
-    // async findOneAndUpdate(
-    //     whereOptions: FilterQuery<ICartDocument>,
-    //     updateOptions: Partial<ICartDocument>
-    // ): Promise<ICartDocument | null> {
-    //     return CartModel.findOneAndUpdate(whereOptions, updateOptions, { new: true });
-    // }
 
     findOneAndUpdate(
         whereOptions: FilterQuery<ICartDocument>,
