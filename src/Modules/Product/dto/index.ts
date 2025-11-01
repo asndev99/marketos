@@ -7,7 +7,7 @@ export const discountedProductsDto = (data: any[]) => {
         ? data.map((item: IProductPopulatedDocument) => {
               return {
                   ...item,
-                  discountPercentage: item.discountedPrice !== null ? (item.discountedPrice / item.price) * 100 : 0,
+                  discountPercentage: item.discountedPrice !== null ? Math.round(( (item?.price - item.discountedPrice) / item.price ) * 100) : 0,
                   isDiscounted: item?.discountedPrice === null ? false : true,
                   categoryKey: Object.keys(categoryMap).find((key) => categoryMap[key] === item?.category),
                   images: item.images.length
