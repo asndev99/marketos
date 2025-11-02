@@ -15,7 +15,7 @@ export const verifyUser = async (req: Request, res: Response, next: NextFunction
         }
         const verifiedUser = jwt.verify(authorization, JWT_SECRET!) as JwtVerifiedPayload;
         const user = await userRepository.findById(verifiedUser.id);
-        if (!user) {
+        if (!user || (user && user.isDeleted)) {
             throw new UnauthorizedError('Session Expired,please login to continue');
         }
         req.user = user;
