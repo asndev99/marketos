@@ -32,7 +32,7 @@ const login = async (req: Request, res: Response) => {
     const { username, password, role } = req.body;
     const user = await userRepository.findOne({ username, role, isDeleted: false });
     if (!user) {
-        throw new BadRequestError('Invalid Credentials');
+        throw new BadRequestError('User Not Found');
     }
     const isPassword = bcrypt.compareSync(password, user.password);
     if (!isPassword) {
