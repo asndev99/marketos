@@ -34,8 +34,6 @@ export class MongoUserRepository implements IUserRepository {
         });
     }
     async deleteUser(id: string, userType: string): Promise<Boolean> {
-        console.log("id: ", id);
-        console.log("userType: ", userType);
         await UserModel.findByIdAndUpdate(
             id,
             { isDeleted: true },
