@@ -1,10 +1,11 @@
 import { CartItemDto } from '../interface';
 
 export const getCartItemsDto = (data: any, isSingleObject: boolean): CartItemDto[] => {
-    const response = isSingleObject ? getCartItemDto(data) :
-    data.length
+    const response = isSingleObject
+        ? getCartItemDto(data)
+        : data.length
         ? data.map((item: any) => {
-            //   const isDiscounted = item.productId.status === 'DISCOUNTED';
+              //   const isDiscounted = item.productId.status === 'DISCOUNTED';
               const isDiscounted = item.productId.discountedPrice === null ? false : true;
 
               const originalPricePerItem = item.productId.price;
@@ -16,7 +17,7 @@ export const getCartItemsDto = (data: any, isSingleObject: boolean): CartItemDto
               const priceAfterDiscount = discountedPricePerItem * item.qty;
 
               const discountPercentage = isDiscounted
-                  ? Math.floor( ( ((actualPrice - priceAfterDiscount) / actualPrice) * 100 ) * 10) / 10
+                  ? Math.floor(((actualPrice - priceAfterDiscount) / actualPrice) * 100 * 10) / 10
                   : 0;
               return {
                   cartId: item._id,
@@ -36,11 +37,11 @@ export const getCartItemsDto = (data: any, isSingleObject: boolean): CartItemDto
           })
         : [];
 
-        return response;
+    return response;
 };
 
 const getCartItemDto = (item: any): any => {
-    const isDiscounted = item.productId.status === 'DISCOUNTED';
+    const isDiscounted = item.productId.discountedPrice === null ? false : true;
 
     const originalPricePerItem = item.productId.price;
     const discountedPricePerItem = isDiscounted
