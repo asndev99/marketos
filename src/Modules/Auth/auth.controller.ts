@@ -44,6 +44,16 @@ const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
+const changeUserPassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        await authService.changePassword(req);
+        return successResponse(res, 200, 'Successfully changed your password', null);
+    } catch (error) {
+        console.log('Error in logging in', error);
+        next(error);
+    }
+};
+
 //NOT IN USER FOR NOW
 const createShop = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -70,5 +80,6 @@ export default {
     createCompany,
     createShop,
     validateUsername,
-    deleteUser
+    deleteUser,
+    changeUserPassword
 };

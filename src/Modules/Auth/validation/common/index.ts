@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { date, z } from 'zod';
 import { roles, UserRole } from '../../../../Common/constants';
 
 export const baseStringSchema = z.string().trim().min(1, 'Field cannot be empty');
@@ -22,3 +22,18 @@ export const validateUserNameSchema = z
         username: baseStringSchema,
     })
     .strict();
+
+export const changePasswordSchema = z
+    .object({
+        newPassword: passwordSchema,
+        oldPassword: baseStringSchema,
+        confirmPassword: baseStringSchema,
+    }).strict()
+    .refine((data) => data.newPassword !== data.oldPassword, {
+        message: 'New password must be different from old password',
+        path: ['newPassword'],
+    })
+    .refine((data) => data?.confirmPassword === data?.newPassword, {
+        message: 'Confirm password must match new password',
+        path: ['confirmPassword'],
+    });

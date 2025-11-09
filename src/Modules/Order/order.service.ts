@@ -116,7 +116,8 @@ const orderPlacement = async (req: Request, res: Response, session: ClientSessio
 };
 
 const allOrders = async (req: Request, res: Response) => {
-    const myOrders = await orderRepository.allOrders({ userId: req?.user?._id });
+    const {from , to} = req?.query as {from: string, to: string};
+    const myOrders = await orderRepository.allOrders({ userId: req?.user?._id, from, to });
     return myOrders
         .map((order) => {
             let totalItems: number = 0;
