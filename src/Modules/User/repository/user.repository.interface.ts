@@ -8,4 +8,5 @@ export interface IUserRepository {
   findById(id: string): Promise<IUser | null>;
   findOne(payload: FilterQuery<IUserDocument>): Promise<IUserDocument | null>;
   deleteUser(id: string, userType: string): Promise<Boolean>;
+  changePassword(payload: any): Promise<Boolean>;
 }

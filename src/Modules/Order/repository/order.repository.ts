@@ -35,9 +35,34 @@ export class MongoOrderRepository implements IOrderRepository {
         return PaymentTransactionModel.insertMany(data, { session });
     }
     async allOrders(
-        payload: FilterQuery<IUserOrderDocument>
+        payload: FilterQuery<IUserOrderDocument> & {
+            from?: string;
+            to?: string;
+        }
     ): Promise<IUserOrderPopulatedDocument[]> {
-        return UserOrderModel.find({ ...payload })
+        const { from, to, ...rest } = payload;
+
+        const filter: FilterQuery<IUserOrderDocument> = { ...rest };
+        if (from && to) {
+            const fromDate = new Date(from);
+            const toDate = new Date(to);
+            toDate.setUTCHours(23, 59, 59, 999);
+
+            filter.orderTimeEpoch = {
+                $gte: fromDate,
+                $lte: toDate,
+            };
+        } else if (from) {
+            const fromDate = new Date(from);
+            filter.orderTime = { $gte: fromDate };
+        } else if (to) {
+            const toDate = new Date(to);
+            toDate.setUTCHours(23, 59, 59, 999);
+
+            filter.orderTime = { $lte: toDate };
+        }
+
+        return UserOrderModel.find(filter)
             .populate({
                 path: 'orderProducts',
                 populate: {
@@ -53,7 +78,7 @@ export class MongoOrderRepository implements IOrderRepository {
         const userOrder = await UserOrderModel.aggregate([
             {
                 $match: {
-                    _id: new Types.ObjectId(payload?._id), 
+                    _id: new Types.ObjectId(payload?._id),
                     userId: new Types.ObjectId(payload?.userId),
                 },
             },
@@ -122,7 +147,10 @@ export class MongoOrderRepository implements IOrderRepository {
         return userOrder[0];
     }
 
-    async allOrdersForCompany(orderStatus: string, companyId: string): Promise<IUserOrderPopulatedDocument[]> {
+    async allOrdersForCompany(
+        orderStatus: string,
+        companyId: string
+    ): Promise<IUserOrderPopulatedDocument[]> {
         const userOrders = await UserOrderModel.aggregate([
             {
                 $lookup: {
@@ -138,7 +166,10 @@ export class MongoOrderRepository implements IOrderRepository {
             {
                 $match: {
                     'orderProducts.companyId': new Types.ObjectId(companyId),
-                    'orderProducts.orderStatus': orderStatus === "RECEIVED" ? { $in: ["DELIVERED", "RECEIVED"] } : orderStatus
+                    'orderProducts.orderStatus':
+                        orderStatus === 'RECEIVED'
+                            ? { $in: ['DELIVERED', 'RECEIVED'] }
+                            : orderStatus,
                 },
             },
             {

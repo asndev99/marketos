@@ -7,7 +7,7 @@ import { authorizeRole } from '../../Middlewares/authorize.roles.middleware';
 import { UserRole } from '../../Common/constants';
 import { orderSummarySchema } from './validation/orderSummary';
 import { orderPlacementSchema } from './validation/orderPlacement';
-import { orderParamsSchema, orderQuerySchema, orderPaymentSchema } from './validation/updateOrder';
+import { orderParamsSchema, orderQuerySchema, orderPaymentSchema, allOrderQuerySchema } from './validation/updateOrder';
 
 const orderRouter = require('express').Router();
 orderRouter.post(
@@ -28,6 +28,7 @@ orderRouter.get(
     '/all-order',
     verifyUser,
     authorizeRole(UserRole.SHOPKEEPER),
+    validateQueryParams(allOrderQuerySchema),
     orderController.myOrders
 );
 orderRouter.get(
