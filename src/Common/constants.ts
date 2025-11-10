@@ -16,6 +16,7 @@ export enum PaymentMethod {
     CASH = 'CASH',
     CREDIT = 'CREDIT',
 }
+
 export enum OrderStatus {
     NEW = 'PENDING',
     ACCEPTED = 'ACCEPTED',

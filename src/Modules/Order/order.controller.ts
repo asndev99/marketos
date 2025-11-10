@@ -61,7 +61,8 @@ const pieChartAnalytics = async (req: Request, res: Response, next: NextFunction
 const updateOrderStatus = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const data = await orderService.updateOrderStatus(req, res);
-        if(data.status) return successResponse(res, 200, 'Successfully Update the order status ', data);
+        if (data.status)
+            return successResponse(res, 200, 'Successfully Update the order status ', data);
         else return errorResponse(res, 400, data?.message);
     } catch (error) {
         console.log('Error in updating orders', error);
@@ -86,5 +87,5 @@ export default {
     mySingleOrder,
     pieChartAnalytics,
     updateOrderStatus,
-    updateOrderPaymentStatus
+    updateOrderPaymentStatus,
 };

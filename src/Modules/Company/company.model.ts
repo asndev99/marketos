@@ -80,8 +80,8 @@ const companySchema: Schema<ICompanyDocument> = new Schema(
         },
         isDeleted: {
             type: Boolean,
-            default: false
-        }
+            default: false,
+        },
     },
     {
         timestamps: true,
