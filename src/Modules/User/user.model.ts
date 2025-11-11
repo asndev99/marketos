@@ -35,4 +35,11 @@ const userSchema: Schema<IUserDocument> = new Schema({
     },
 });
 
+userSchema.virtual('shop', {
+    ref: 'Shop',
+    localField: '_id',
+    foreignField: 'userId',
+    justOne: true,
+});
+
 export const UserModel = mongoose.model<IUserDocument>('User', userSchema);

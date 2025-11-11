@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { UserRole } from '../../Common/constants';
 
 export interface IUser {
@@ -9,5 +10,5 @@ export interface IUser {
     role: UserRole;
     isNotificationsEnabled: boolean;
     isProfileCompleted: boolean;
-    isDeleted: boolean
+    isDeleted: boolean;
 }
