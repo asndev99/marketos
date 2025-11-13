@@ -45,17 +45,16 @@ const login = async (req: Request, res: Response) => {
 
     const data = {
         accessToken,
-        isProfileCompleted: user.isProfileCompleted
-    }
+        isProfileCompleted: user.isProfileCompleted,
+    };
     if (role == UserRole.SHOPKEEPER) {
         const shop = await shopRepository.findOne({ userId: user._id });
         return {
             ...data,
-            shop
-        }
+            shop,
+        };
     }
     return data;
-
 };
 
 const createShop = async (req: Request) => {
@@ -65,7 +64,11 @@ const createShop = async (req: Request) => {
         throw new BadRequestError('This username is already in use');
     }
     const hashPassword = bcrypt.hashSync(password, 10);
-    const shopKeeper = await userRepository.create({ username, password: hashPassword, role: UserRole.SHOPKEEPER });
+    const shopKeeper = await userRepository.create({
+        username,
+        password: hashPassword,
+        role: UserRole.SHOPKEEPER,
+    });
     const accessToken = TokenService.generateAccessToken({
         _id: shopKeeper._id.toString(),
         role: shopKeeper.role,
@@ -84,7 +87,22 @@ const validateUsername = async (req: Request) => {
 const deleteAccount = async (req: Request) => {
     await userRepository.deleteUser(req?.user?._id.toString(), req?.user?.role);
     return true;
-}
+};
+
+const changePassword = async (req: Request) => {
+    const { oldPassword, newPassword, confirmPassword} = req.body;
+    const user = await userRepository.findOne({ _id: req?.user?._id.toString(), role: req?.user?.role });
+    if (!user) {
+        throw new BadRequestError('User Not Found');
+    }
+    const isPassword = bcrypt.compareSync(oldPassword, user.password);
+    if (!isPassword) {
+        throw new BadRequestError('Invalid Credenitals');
+    }
+    const hashPassword = bcrypt.hashSync(newPassword, 10);
+    await userRepository.changePassword({id: req?.user?._id.toString(), password: hashPassword});
+    return true;
+};
 
 export default {
     createAdmin,
@@ -92,5 +110,6 @@ export default {
     login,
     createShop,
     validateUsername,
-    deleteAccount
+    deleteAccount,
+    changePassword
 };

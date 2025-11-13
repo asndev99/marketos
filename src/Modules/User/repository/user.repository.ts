@@ -53,13 +53,27 @@ export class MongoUserRepository implements IUserRepository {
             );
             await ProductModel.updateMany(
                 { companyId: company?._id },
-                { isDeleted: true },
+                { $set: { isDeleted: true } },
                 {
                     new: true,
                     runValidators: true,
                 }
             );
         }
+
+        return true;
+    }
+
+    async changePassword(payload: any): Promise<Boolean> {
+        await UserModel.updateOne(
+            { _id: payload?.id },
+            {
+                $set: {
+                    password: payload?.password,
+                },
+            },
+            { new: true, runValidators: true }
+        );
 
         return true;
     }

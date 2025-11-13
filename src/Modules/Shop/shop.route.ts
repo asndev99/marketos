@@ -8,6 +8,11 @@ import { UserRole } from '../../Common/constants';
 import { createUploadMiddleware } from '../../Middlewares/formData/multer.middleware';
 const shopRouter = express.Router();
 
+shopRouter.get(
+    '/shop-category',
+    shopController.shopCategories
+);
+
 shopRouter.post(
     '/complete-profile',
     verifyUser,

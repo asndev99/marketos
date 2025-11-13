@@ -14,8 +14,9 @@ export interface ICompanyRepository {
     create(data: Partial<ICompany>): Promise<ICompany>;
     update(id: string, data: Partial<ICompanyDocument>): Promise<ICompanyDocument | null>;
     findOne(payload: FilterQuery<ICompanyDocument>): Promise<ICompanyDocument | null>;
-    findMany(payload: FindManyOptions): Promise<{
+    findMany(categories: string | undefined, payload: FindManyOptions): Promise<{
         data: ICompanyDocument[];
         meta: paginationMeta;
     }>;
+    findCompanyCategories(id: string) : Promise<any[]>
 }

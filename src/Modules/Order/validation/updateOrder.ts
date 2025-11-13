@@ -12,3 +12,8 @@ export const orderQuerySchema = z.object({
 export const orderPaymentSchema = z.object({
     status: z.enum(["COMPLETED"])
 })
+
+export const allOrderQuerySchema = z.object({
+  from: z.string().optional(),
+  to: z.string().optional()
+}).strict();

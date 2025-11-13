@@ -116,7 +116,8 @@ const orderPlacement = async (req: Request, res: Response, session: ClientSessio
 };
 
 const allOrders = async (req: Request, res: Response) => {
-    const myOrders = await orderRepository.allOrders({ userId: req?.user?._id });
+    const {from , to} = req?.query as {from: string, to: string};
+    const myOrders = await orderRepository.allOrders({ userId: req?.user?._id, from, to });
     return myOrders
         .map((order) => {
             let totalItems: number = 0;
@@ -176,6 +177,7 @@ const fetchSingleorder = async (req: Request, res: Response) => {
                   orderTimeUnitProductPrice: product?.orderTimeUnitProductPrice,
                   paymentMethod: product?.PaymentMethod,
                   orderStatus: product?.orderStatus,
+                  cancelReason: (product?.orderStatus === "COMPANY_CANCELLED" || product?.orderStatus === "USER_CANCELLED") ? product?.cancelReason : null,
                   isOrderPlaced: product?.isOrderPlaced,
                   paymentTransaction: {
                       paymentId: product?.paymentTransaction?._id,

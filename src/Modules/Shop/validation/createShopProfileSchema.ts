@@ -13,6 +13,7 @@ export const createShopProfileSchema = z
         longitude: z.coerce.number(),
         latitude: z.coerce.number(),
         NIC: nicSchema,
-        ntn: baseStringSchema.nullable().optional()
+        ntn: baseStringSchema.nullable().optional(),
+        category: z.enum(["MART", "BAKERY", "RESTAURANT", "CAFE", "GENERAL_STORE", "DISTRIBUTOR"])
     })
     .strict();

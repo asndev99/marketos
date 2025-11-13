@@ -2,6 +2,7 @@ import { Types } from 'mongoose';
 
 export interface IShop {
     userId: Types.ObjectId;
+    category: string;
     ownerName: string;
     shopName: string;
     shopNumber?: string;
