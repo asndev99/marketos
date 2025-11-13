@@ -3,6 +3,16 @@ import shopHomeService from './services/shop.home.service';
 import shopProfileService from './services/shop.profile.service';
 import { successResponse } from '../../Utils/Response';
 
+export const shopCategories = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const data = ["MART", "BAKERY", "RESTAURANT", "CAFE", "GENERAL_STORE", "DISTRIBUTOR"];
+        return successResponse(res, 200, 'Get Shop Categories', data);
+    } catch (error) {
+        console.log('Error in creating shop', error);
+        next(error);
+    }
+};
+
 export const completeShopDetails = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const data = await shopProfileService.completeShopDetails(req);
@@ -86,7 +96,7 @@ export const allCompanies = async (req: Request, res: Response, next: NextFuncti
 export const companyProducts = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const data = await shopHomeService.getCompanyProducts(req);
-        return successResponse(res, 200, 'Company Products Fetched Successfully', data);
+        return successResponse(res, 200, 'Company Products Fetched Successfully', data?.data);
     } catch (error) {
         console.log('Error in getting discounted Products');
         next(error);
@@ -114,6 +124,7 @@ export const similarProducts = async (req: Request, res: Response, next: NextFun
 };
 
 export default {
+    shopCategories,
     completeShopDetails,
     getProfile,
     updateProfilePicture,

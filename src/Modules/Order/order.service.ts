@@ -177,6 +177,7 @@ const fetchSingleorder = async (req: Request, res: Response) => {
                   orderTimeUnitProductPrice: product?.orderTimeUnitProductPrice,
                   paymentMethod: product?.PaymentMethod,
                   orderStatus: product?.orderStatus,
+                  cancelReason: (product?.orderStatus === "COMPANY_CANCELLED" || product?.orderStatus === "USER_CANCELLED") ? product?.cancelReason : null,
                   isOrderPlaced: product?.isOrderPlaced,
                   paymentTransaction: {
                       paymentId: product?.paymentTransaction?._id,

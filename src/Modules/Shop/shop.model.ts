@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { IShop } from './interface';
 
-export interface IShopDocument extends IShop, Document { }
+export interface IShopDocument extends IShop, Document {}
 
 const shopSchema: Schema<IShopDocument> = new Schema({
     userId: {
@@ -9,6 +9,10 @@ const shopSchema: Schema<IShopDocument> = new Schema({
         ref: 'User',
         required: true,
         unique: true,
+    },
+    category: {
+        type: String,
+        required: true,
     },
     ownerName: {
         type: String,
@@ -21,7 +25,7 @@ const shopSchema: Schema<IShopDocument> = new Schema({
     shopNumber: {
         type: String,
         required: false,
-        default: null
+        default: null,
     },
     mobileNumber: {
         type: String,
@@ -55,13 +59,13 @@ const shopSchema: Schema<IShopDocument> = new Schema({
     ntn: {
         type: String,
         required: false,
-        default: null
+        default: null,
     },
     shopImage: {
         type: String,
         required: false,
-        default: null
-    }
+        default: null,
+    },
 });
 shopSchema.index({ location: '2dsphere' });
 export const ShopModel = mongoose.model<IShopDocument>('Shop', shopSchema);
