@@ -5,6 +5,7 @@ import { MongoProductRepository } from '../../Product/repository/product.reposit
 import { discountedProductsDto } from '../../Product/dto';
 import { FilterQuery } from 'mongoose';
 import { IProductDocument } from '../../Product/product.model';
+import { validate } from 'uuid';
 
 const companyRepository = new MongoCompanyRepository();
 const productRepository = new MongoProductRepository();
@@ -17,10 +18,10 @@ const getCategories = async (req: Request) => {
 };
 
 const getPopularCompanies = async (req: Request) => {
-    return companyRepository.findMany({
+    return companyRepository.findMany(undefined, {
         filter: {
             isPopular: true,
-            isDeleted: false
+            isDeleted: false,
         },
         page: req.query.page ? parseInt(req.query.page as string, 10) : undefined,
         limit: req.query.limit ? parseInt(req.query.limit as string, 10) : undefined,
@@ -48,9 +49,9 @@ const getDiscountedProducts = async (req: Request) => {
 };
 
 const getAllCompanies = async (req: Request) => {
-    return companyRepository.findMany({
+    return companyRepository.findMany(undefined, {
         filter: {
-            isDeleted: false
+            isDeleted: false,
         },
         page: req.query.page ? parseInt(req.query.page as string, 10) : undefined,
         limit: req.query.limit ? parseInt(req.query.limit as string, 10) : undefined,
@@ -99,17 +100,27 @@ const getCompanyProducts = async (req: Request) => {
         limit: req.query.limit ? parseInt(req.query.limit as string, 10) : undefined,
         sortOrder: 'desc',
     });
+    const companyCategories = await companyRepository.findCompanyCategories(
+        req.params.id.toString()
+    );
+    const categories = companyCategories.map((category) => {
+        const key = Object.keys(categoryMap).find((key) => categoryMap[key] === category);
+        return {
+            key: key,
+            value: category,
+        };
+    });
     const result = discountedProductsDto(data);
     return {
-        data: result,
+        data: { data: result, categories },
         meta,
     };
 };
 
 const getCompaniesByProducts = async (req: Request) => {
     const mappedCategory = categoryMap[req.query.category as string];
-    return companyRepository.findMany({
-        filter: { category: { $in: [mappedCategory] }, isDeleted: false },
+    return companyRepository.findMany(mappedCategory, {
+        filter: { isDeleted: false },
     });
 };
 
@@ -119,9 +130,9 @@ const similarProducts = async (req: Request) => {
 
     return {
         sameCategoryProducts,
-        sameCompanyProducts
-    }
-}
+        sameCompanyProducts,
+    };
+};
 
 export default {
     getCategories,
@@ -131,5 +142,5 @@ export default {
     getCategoryProducts,
     getCompanyProducts,
     getCompaniesByProducts,
-    similarProducts
+    similarProducts,
 };

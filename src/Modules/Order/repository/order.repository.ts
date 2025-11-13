@@ -317,7 +317,7 @@ export class MongoOrderRepository implements IOrderRepository {
                         orderStatus: item?.status,
                         deliveredQuantity: item?.quantity,
                         finalPrice: item?.price,
-                        isOrderPlaced: true,
+                        isOrderPlaced: item?.status === "COMPANY_CANCELLED" ? false : true,
                     },
                 },
             },
