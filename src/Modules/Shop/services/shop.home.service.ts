@@ -4,7 +4,7 @@ import { Request } from 'express';
 import { MongoProductRepository } from '../../Product/repository/product.repository';
 import { discountedProductsDto } from '../../Product/dto';
 import { FilterQuery } from 'mongoose';
-import { IProductDocument } from '../../Product/product.model';
+import { IProductDocument, ProductModel } from '../../Product/product.model';
 import { validate } from 'uuid';
 
 const companyRepository = new MongoCompanyRepository();
@@ -134,7 +134,55 @@ const similarProducts = async (req: Request) => {
     };
 };
 
+const search = async (req: Request) => {
+    const { searchTerm } = req.query;
+    if (!searchTerm) {
+        return [];
+    }
+
+    if (searchTerm.toString().length <= 2) {
+        return [];
+    }
+
+    return ProductModel.aggregate([
+        {
+            $search: {
+                index: 'default',
+                compound: {
+                    should: [
+                        {
+                            text: {
+                                query: searchTerm,
+                                path: 'name',
+                                score: { boost: { value: 5 } },
+                            },
+                        },
+                        {
+                            autocomplete: {
+                                query: searchTerm,
+                                path: 'name',
+                                fuzzy: { maxEdits: 1 },
+                            },
+                        },
+                    ],
+                },
+            },
+        },
+        { $limit: 20 },
+        {
+            $project: {
+                _id: 1,
+                name: 1,
+                productId: 1,
+                companyId: 1,
+                category: 1,
+            },
+        },
+    ]);
+};
+
 export default {
+    search,
     getCategories,
     getPopularCompanies,
     getDiscountedProducts,

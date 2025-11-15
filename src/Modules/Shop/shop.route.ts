@@ -8,10 +8,7 @@ import { UserRole } from '../../Common/constants';
 import { createUploadMiddleware } from '../../Middlewares/formData/multer.middleware';
 const shopRouter = express.Router();
 
-shopRouter.get(
-    '/shop-category',
-    shopController.shopCategories
-);
+shopRouter.get('/shop-category', shopController.shopCategories);
 
 shopRouter.post(
     '/complete-profile',
@@ -97,5 +94,7 @@ shopRouter.get(
     authorizeRole(UserRole.SHOPKEEPER),
     shopController.similarProducts
 );
+
+shopRouter.get('/search', verifyUser, authorizeRole(UserRole.SHOPKEEPER), shopController.search);
 
 export default shopRouter;
