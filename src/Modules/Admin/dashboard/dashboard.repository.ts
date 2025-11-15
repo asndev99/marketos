@@ -4,6 +4,7 @@ import { CompanyModel } from '../../Company/company.model';
 import { OrderProductModel, UserOrderModel } from '../../Order/order.model';
 import { ProductModel } from '../../Product/product.model';
 import { UserModel } from '../../User/user.model';
+import bcrypt from 'bcrypt';
 
 // DCFC -> DIRECT CALL FROM CONTROLLER
 // IFH  -> IN FILE HELPER
@@ -221,5 +222,14 @@ export const orderDetails = async (orderId: string) => {
 export const listAllProducts = async () => {
     return ProductModel.find({
         isDeleted: false,
+    });
+};
+
+export const createCompany = async (data: { username: string; password: string }) => {
+    const hashPassword = await bcrypt.hash(data.password, 10);
+    return UserModel.create({
+        username: data.username,
+        password: hashPassword,
+        role: UserRole.COMPANY,
     });
 };
