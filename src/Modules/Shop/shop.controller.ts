@@ -5,7 +5,7 @@ import { successResponse } from '../../Utils/Response';
 
 export const shopCategories = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const data = ["MART", "BAKERY", "RESTAURANT", "CAFE", "GENERAL_STORE", "DISTRIBUTOR"];
+        const data = ['MART', 'BAKERY', 'RESTAURANT', 'CAFE', 'GENERAL_STORE', 'DISTRIBUTOR'];
         return successResponse(res, 200, 'Get Shop Categories', data);
     } catch (error) {
         console.log('Error in creating shop', error);
@@ -123,7 +123,18 @@ export const similarProducts = async (req: Request, res: Response, next: NextFun
     }
 };
 
+export const search = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const result = await shopHomeService.search(req);
+        return successResponse(res, 200, 'Search Result', result);
+    } catch (error) {
+        console.log('Error in searching', error);
+        next(error);
+    }
+};
+
 export default {
+    search,
     shopCategories,
     completeShopDetails,
     getProfile,
@@ -135,5 +146,5 @@ export default {
     categoryProducts,
     companyProducts,
     getCompaniesByCategory,
-    similarProducts
+    similarProducts,
 };
