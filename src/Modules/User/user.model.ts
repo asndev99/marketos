@@ -42,4 +42,7 @@ userSchema.virtual('shop', {
     justOne: true,
 });
 
+userSchema.set('toJSON', { virtuals: true });
+userSchema.set('toObject', { virtuals: true });
+
 export const UserModel = mongoose.model<IUserDocument>('User', userSchema);

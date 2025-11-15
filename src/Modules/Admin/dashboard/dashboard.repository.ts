@@ -193,10 +193,33 @@ const _getOrderCount = async (where = {}) => {
 
 export const listOrder = async (where = {}) => {
     return UserOrderModel.find(where).populate({
-        path: 'userId', // populate user details
+        path: 'userId',
+        select: '_id',
         populate: {
-            path: 'shop', // nested populate: user ke saath shop bhi
+            path: 'shop',
             model: 'Shop',
+            select: 'shopName mobileNumber',
         },
+    });
+};
+
+export const orderDetails = async (orderId: string) => {
+    return OrderProductModel.find({
+        orderId: new mongoose.Types.ObjectId(orderId),
+    }).populate([
+        {
+            path: 'productId',
+            select: 'name',
+        },
+        {
+            path: 'companyId',
+            select: 'companyName profileLogo',
+        },
+    ]);
+};
+
+export const listAllProducts = async () => {
+    return ProductModel.find({
+        isDeleted: false,
     });
 };

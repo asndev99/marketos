@@ -12,6 +12,17 @@ const listAllOrders = async (req: Request, res: Response, next: NextFunction) =>
     }
 };
 
+const orderDetails = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const data = await dashboardRepository.orderDetails(req.params.id);
+        return successResponse(res, 200, 'Order Details Fetched Successfully', data);
+    } catch (error) {
+        console.log('Error in order details', error);
+        next(error);
+    }
+};
+
 export default {
     listAllOrders,
+    orderDetails,
 };
