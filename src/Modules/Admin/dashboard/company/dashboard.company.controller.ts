@@ -2,6 +2,16 @@ import { Request, Response, NextFunction } from 'express';
 import * as dashboardRepository from '../dashboard.repository';
 import { successResponse } from '../../../../Utils/Response';
 
+const createCompany = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const data = await dashboardRepository.createCompany(req.body);
+        return successResponse(res, 200, 'Company Created Successfully', data);
+    } catch (error) {
+        console.log('Error in creating company');
+        next(error);
+    }
+};
+
 const listAllCompanies = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const data = await dashboardRepository.listAllCompanies();
@@ -33,6 +43,7 @@ const companyProductsList = async (req: Request, res: Response, next: NextFuncti
 };
 
 export default {
+    createCompany,
     listAllCompanies,
     companyDetails,
     companyProductsList,
