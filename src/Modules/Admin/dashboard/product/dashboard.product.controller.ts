@@ -12,6 +12,19 @@ const listAllProducts = async (req: Request, res: Response, next: NextFunction) 
     }
 };
 
+const updateProductStatus = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        await dashboardRepository.updateStatus({
+            productId: req.params.productId,
+            status: req.body.status,
+        });
+        return successResponse(res, 200, 'Product Status Updated Successfully');
+    } catch (error) {
+        console.log('Error in updating status', error);
+    }
+};
+
 export default {
+    updateProductStatus,
     listAllProducts,
 };

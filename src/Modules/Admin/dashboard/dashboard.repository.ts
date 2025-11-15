@@ -6,6 +6,7 @@ import { ProductModel } from '../../Product/product.model';
 import { UserModel } from '../../User/user.model';
 import bcrypt from 'bcrypt';
 import { BadRequestError } from '../../../Utils/Error';
+import { ShopModel } from '../../Shop/shop.model';
 
 // DCFC -> DIRECT CALL FROM CONTROLLER
 // IFH  -> IN FILE HELPER
@@ -240,3 +241,13 @@ export const createCompany = async (data: { username: string; password: string }
         role: UserRole.COMPANY,
     });
 };
+
+export const updateStatus = async (data: { productId: string; status: Boolean }) => {
+    return await ProductModel.findByIdAndUpdate(new mongoose.Types.ObjectId(data.productId), {
+        isBlocked: data.status,
+    });
+};
+
+export const listAllShops = async() => {
+    return ShopModel.find()
+}

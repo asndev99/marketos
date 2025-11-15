@@ -12,6 +12,7 @@ export interface IProduct {
     stockQuantity: number;
     status: String;
     isDeleted: Boolean;
+    isBlocked:Boolean;
 }
 export interface IProductImage {
     isDelete: Boolean;
