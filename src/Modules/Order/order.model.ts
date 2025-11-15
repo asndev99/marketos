@@ -1,10 +1,6 @@
 import mongoose, { Document, Schema, Types } from 'mongoose';
-import {
-    IUserOrder,
-    IOrderProduct,
-    IPaymentTransaction,
-} from './interface';
-import {PaymentStatus, PaymentMethod, OrderStatus} from "../../Common/constants";
+import { IUserOrder, IOrderProduct, IPaymentTransaction } from './interface';
+import { PaymentStatus, PaymentMethod, OrderStatus } from '../../Common/constants';
 
 export interface IUserOrderDocument extends Document, IUserOrder {
     _id: Types.ObjectId;
@@ -29,7 +25,6 @@ export interface IOrderProductDocument extends Document, IOrderProduct {
     _id: Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;
-
 }
 const OrderProductSchema: Schema<IOrderProductDocument> = new Schema(
     {
@@ -43,7 +38,7 @@ const OrderProductSchema: Schema<IOrderProductDocument> = new Schema(
         orderTimeUnitProductPrice: { type: Number, required: true },
         isOrderPlaced: { type: Boolean, default: false },
         orderStatus: { type: String, enum: OrderStatus, default: 'PENDING' },
-        PaymentMethod: {type: String, enum: PaymentMethod},
+        PaymentMethod: { type: String, enum: PaymentMethod },
         cancelReason: { type: String, required: false },
     },
     { timestamps: true }
@@ -65,20 +60,20 @@ const PaymentTransactionSchema: Schema<IPaymentTransactionDocument> = new Schema
 UserOrderSchema.virtual('orderProducts', {
     ref: 'OrderProduct',
     localField: '_id',
-    foreignField: 'orderId'
-})
+    foreignField: 'orderId',
+});
 
 OrderProductSchema.virtual('paymentTransaction', {
-  ref: 'PaymentTransaction',
-  localField: '_id',
-  foreignField: 'orderProductId',
-  justOne: true,
+    ref: 'PaymentTransaction',
+    localField: '_id',
+    foreignField: 'orderProductId',
+    justOne: true,
 });
-UserOrderSchema.set('toObject', {virtuals: true});
-UserOrderSchema.set('toJSON', {virtuals: true});
+UserOrderSchema.set('toObject', { virtuals: true });
+UserOrderSchema.set('toJSON', { virtuals: true });
 
-OrderProductSchema.set('toObject', {virtuals: true});
-OrderProductSchema.set('toJSON', {virtuals: true});
+OrderProductSchema.set('toObject', { virtuals: true });
+OrderProductSchema.set('toJSON', { virtuals: true });
 
 export const UserOrderModel = mongoose.model<IUserOrderDocument>('UserOrder', UserOrderSchema);
 export const OrderProductModel = mongoose.model<IOrderProductDocument>(
