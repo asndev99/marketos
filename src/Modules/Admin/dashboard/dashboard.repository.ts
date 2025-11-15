@@ -5,6 +5,7 @@ import { OrderProductModel, UserOrderModel } from '../../Order/order.model';
 import { ProductModel } from '../../Product/product.model';
 import { UserModel } from '../../User/user.model';
 import bcrypt from 'bcrypt';
+import { BadRequestError } from '../../../Utils/Error';
 
 // DCFC -> DIRECT CALL FROM CONTROLLER
 // IFH  -> IN FILE HELPER
@@ -226,6 +227,12 @@ export const listAllProducts = async () => {
 };
 
 export const createCompany = async (data: { username: string; password: string }) => {
+    const existingCompany = await UserModel.findOne({
+        username: data.username,
+    });
+    if (existingCompany) {
+        throw new BadRequestError('Company with this username Already Exists');
+    }
     const hashPassword = await bcrypt.hash(data.password, 10);
     return UserModel.create({
         username: data.username,
