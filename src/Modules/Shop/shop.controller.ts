@@ -123,6 +123,16 @@ export const similarProducts = async (req: Request, res: Response, next: NextFun
     }
 };
 
+export const debounceSearch = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const result = await shopHomeService.debounceSearch(req);
+        return successResponse(res, 200, 'Search Result', result);
+    } catch (error) {
+        console.log('Error in searching', error);
+        next(error);
+    }
+};
+
 export const search = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const result = await shopHomeService.search(req);
@@ -135,6 +145,7 @@ export const search = async (req: Request, res: Response, next: NextFunction) =>
 
 export default {
     search,
+    debounceSearch,
     shopCategories,
     completeShopDetails,
     getProfile,

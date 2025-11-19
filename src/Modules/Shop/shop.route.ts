@@ -95,6 +95,18 @@ shopRouter.get(
     shopController.similarProducts
 );
 
-shopRouter.get('/search', verifyUser, authorizeRole(UserRole.SHOPKEEPER), shopController.search);
+shopRouter.get(
+    '/debounce-search',
+    verifyUser,
+    authorizeRole(UserRole.SHOPKEEPER),
+    shopController.debounceSearch
+);
+
+shopRouter.get(
+    '/search',
+    verifyUser,
+    authorizeRole(UserRole.SHOPKEEPER),
+    shopController.search
+);
 
 export default shopRouter;

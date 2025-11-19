@@ -134,7 +134,7 @@ const similarProducts = async (req: Request) => {
     };
 };
 
-const search = async (req: Request) => {
+const debounceSearch = async (req: Request) => {
     const { searchTerm } = req.query;
     if (!searchTerm) {
         return [];
@@ -181,8 +181,13 @@ const search = async (req: Request) => {
     ]);
 };
 
+const search = async(req:Request) => {
+    return "";
+}
+
 export default {
     search,
+    debounceSearch,
     getCategories,
     getPopularCompanies,
     getDiscountedProducts,
