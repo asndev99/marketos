@@ -181,9 +181,70 @@ const debounceSearch = async (req: Request) => {
     ]);
 };
 
-const search = async(req:Request) => {
-    return "";
-}
+const search = async (req: Request) => {
+    const { searchTerm } = req.query;
+
+    if (!searchTerm || !Boolean(searchTerm?.toString().trim())) {
+        return [];
+    }
+
+    const data = await ProductModel.aggregate([
+        {
+            $search: {
+                index: 'default',
+                compound: {
+                    should: [
+                        {
+                            text: {
+                                query: searchTerm,
+                                path: 'name',
+                                score: { boost: { value: 5 } },
+                            },
+                        },
+                        {
+                            autocomplete: {
+                                query: searchTerm,
+                                path: 'name',
+                                fuzzy: { maxEdits: 1 },
+                            },
+                        },
+                    ],
+                },
+            },
+        },
+
+        {
+            $lookup: {
+                from: 'productimages',
+                localField: '_id',
+                foreignField: 'productId',
+                as: 'images',
+            },
+        },
+
+        { $limit: 20 },
+
+        {
+            $project: {
+                name: 1,
+                price: 1,
+                discountedPrice: 1,
+                category: 1,
+                images: 1,
+                sku: 1,
+                currency: 1,
+                barcode: 1,
+                status: 1,
+                isDeleted: 1,
+                discountPercentage: 1,
+                isDiscounted: 1,
+                categoryKey: 1,
+                score: { $meta: 'searchScore' },
+            },
+        },
+    ]);
+    return discountedProductsDto(data);
+};
 
 export default {
     search,
